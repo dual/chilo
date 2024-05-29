@@ -1,5 +1,7 @@
 import logging
 
+from werkzeug.wrappers import Request as WSGIRequest, Response as WSGIResponse
+
 from chilo.core.exception import ApiException, ApiTimeOutException
 from chilo.validator.config import ConfigValidator
 from chilo import logger
@@ -26,14 +28,12 @@ class Chilo:
         self.__validate_response = kwargs.get('validate_response', False)
         self.__resolver = Resolver(**kwargs)
         self.__validator = Validator(**kwargs)
-
-    def auto_load(self):
         self.__resolver.auto_load()
         self.__validator.auto_load()
 
-    def route(self, event, context):
-        request = Request(event, context, self.__timeout)
-        response = Response(cors=self.__cors)
+    def route(self, environ, server_response):
+        request = Request(WSGIRequest(environ), self.__timeout)
+        response = Response(cors=self.__cors, WSGIResponse=WSGIResponse, server_response=server_response)
         try:
             self.__log_verbose(title='request-received', log={'request': request})
             self.__run_route_procedure(request, response)
