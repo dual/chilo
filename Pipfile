@@ -10,7 +10,6 @@ python_version = "3.9"
 allow_prereleases = true
 
 [packages]
-gunicorn = "*"
 icecream = "*"
 jsonpickle = "*"
 jsonref = "*"
@@ -23,6 +22,7 @@ xmltodict = "*"
 
 [dev-packages]
 autopep8 = "*"
+gunicorn = "*"
 pylint = "*"
 pylint-quotes = "*"
 pytest = "*"
@@ -31,4 +31,5 @@ pytest-cov = "*"
 
 [scripts]
 test = "python -m unittest discover"
-serve = "gunicorn --workers=1 chilo.run:serve"
+serve = "python -m chilo"
+gunicorn = "gunicorn --workers=1 chilo.run:serve"
