@@ -1,5 +1,5 @@
 from chilo.resolver.modes.base import BaseModeResolver
-from chilo.exception import ApiException
+from chilo.core.exception import ApiException
 
 
 class MappingModeResolver(BaseModeResolver):

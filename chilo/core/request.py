@@ -3,7 +3,7 @@ import urllib
 
 import xmltodict
 
-from chilo.common.json_helper import JsonHelper
+from chilo.core.json_helper import JsonHelper
 
 
 class Request:

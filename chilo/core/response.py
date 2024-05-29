@@ -2,7 +2,7 @@ import base64
 import gzip
 from io import BytesIO
 
-from chilo.common.json_helper import JsonHelper
+from chilo.core.json_helper import JsonHelper
 
 
 class Response:

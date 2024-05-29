@@ -1,4 +1,4 @@
-from chilo.common import logger
+from chilo import logger
 
 
 def log(**settings):

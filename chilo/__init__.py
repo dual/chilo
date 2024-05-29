@@ -1,16 +1,16 @@
 import logging
 
-from chilo.exception import ApiException, ApiTimeOutException
-from chilo.config_validator import ConfigValidator
-from chilo.common import logger
-from chilo.request import Request
+from chilo.core.exception import ApiException, ApiTimeOutException
+from chilo.validator.config import ConfigValidator
+from chilo import logger
+from chilo.core.request import Request
 from chilo.resolver import Resolver
-from chilo.response import Response
-from chilo.common.validator import Validator
+from chilo.core.response import Response
+from chilo.validator import Validator
 
 
 class Chilo:
-    
+
     def __init__(self, **kwargs):
         ConfigValidator.validate(**kwargs)
         self.__before_all = kwargs.get('before_all')
@@ -26,11 +26,11 @@ class Chilo:
         self.__validate_response = kwargs.get('validate_response', False)
         self.__resolver = Resolver(**kwargs)
         self.__validator = Validator(**kwargs)
-    
+
     def auto_load(self):
         self.__resolver.auto_load()
         self.__validator.auto_load()
-    
+
     def route(self, event, context):
         request = Request(event, context, self.__timeout)
         response = Response(cors=self.__cors)

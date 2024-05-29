@@ -1,7 +1,7 @@
 import inspect
 import signal
 
-from chilo.exception import ApiTimeOutException
+from chilo.core.exception import ApiTimeOutException
 
 
 def requirements(**kwargs):

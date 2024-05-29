@@ -1,6 +1,6 @@
 import logging
 
-from chilo.common.logger.common_logger import CommonLogger
+from chilo.logger.common import CommonLogger
 
 
 def log(**kwargs):

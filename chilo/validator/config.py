@@ -1,4 +1,4 @@
-from chilo.exception import ApiException
+from chilo.core.exception import ApiException
 
 
 class ConfigValidator:

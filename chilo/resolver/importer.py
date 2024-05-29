@@ -2,7 +2,7 @@ import importlib.util
 import glob
 import os
 
-from chilo.exception import ApiException
+from chilo.core.exception import ApiException
 
 
 class ResolverImporter:
