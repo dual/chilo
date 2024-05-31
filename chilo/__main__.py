@@ -5,7 +5,7 @@ from chilo import Chilo
 
 api_server = Chilo(
     base_path='/',
-    handlers='tests/handlers',
+    handlers='tests/mocks/handlers',
 )
 # jsonpickle.set_preferred_backend('simplejson')
 # jsonpickle.set_encoder_options('simplejson', use_decimal=True)
@@ -18,4 +18,4 @@ api_server = Chilo(
 #     return response(environ, start_response)
 
 if __name__ == '__main__':
-    run_simple('localhost', 5000, api_server.route)
+    run_simple('127.0.0.1', 5000, api_server.route)

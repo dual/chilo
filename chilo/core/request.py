@@ -4,24 +4,21 @@ import urllib
 import xmltodict
 
 from chilo.core.json_helper import JsonHelper
+from chilo import logger
 
 
 class Request:
 
-    def __init__(self, event, lambda_context=None, timeout=None):
-        self.__event = event
-        self.lambda_context = lambda_context
-        self.__timeout = timeout
-        self.__body = event['body'] if event.get('body') is not None else {}
-        self.__route = event['path'] if event.get('path') is not None else ''
-        self.__path_params = event['pathParameters'] if event.get('pathParameters') is not None else ''
-        self.__request_context = event['requestContext'] if event.get('requestContext') is not None else {}
-        self.__domain = event.get('requestContext', {}).get('domainName', '')
-        self.__stage = event.get('requestContext', {}).get('stage', '')
+    def __init__(self, **kwargs):
+        self.__wsgi = kwargs['wsgi']
+        self.__timeout = kwargs['timeout']
+        self.__data = self.__wsgi.get_data(cache=False, as_text=True)
+        self.__route = self.__wsgi.path
+        self.__path_params = {}
         self.__context = {}
         self.__parsers = {
             'application/json': 'json',
-            'application/graphql': 'json',
+            'application/graphql': 'graphql',
             'application/x-www-form-urlencoded': 'form',
             'multipart/form-data': 'raw',
             'application/xml': 'xml',
@@ -31,53 +28,35 @@ class Request:
 
     @property
     def cookies(self):
-        if self.__event.get('headers', {}).get('cookie'):
-            cookies = self.__event.get('headers', {}).get('cookie')
-        else:
-            cookies = ';'.join(self.__event.get('cookies', []))
-        return cookies
+        return self.__wsgi.cookies
 
     @property
     def protocol(self):
-        if self.__request_context.get('protocol'):
-            protocol = self.__request_context.get('protocol', 'http')
-        else:
-            protocol = self.__request_context.get('http', {}).get('protocol', 'http')
-        return 'https' if 'https' in protocol.lower() else 'http'
+        return self.__wsgi.scheme
 
     @property
     def content_type(self):
-        return self.headers.get('content-type', '').split(';')[0]
+        return self.__wsgi.content_type
+
+    @property
+    def mimetype(self):
+        return self.__wsgi.mimetype
 
     @property
     def host_url(self):
-        return f'{self.protocol}://{self.__domain}'
+        return self.__wsgi.host_url
 
     @property
     def domain(self):
-        return self.__domain
-
-    @property
-    def stage(self):
-        return self.__stage
+        pass
 
     @property
     def method(self):
-        if self.__event.get('httpMethod') is not None:
-            return self.__event['httpMethod'].lower()
-        return ''
-
-    @property
-    def resource(self):
-        if self.__event.get('resource') is not None:
-            return self.__event['resource']
-        return ''
+        return self.__wsgi.method.lower()
 
     @property
     def path(self):
-        if self.__event.get('path') is not None:
-            return self.__event['path']
-        return ''
+        return self.__wsgi.path
 
     @property
     def route(self):
@@ -90,60 +69,50 @@ class Request:
         self.__route = route
 
     @property
-    def authorizer(self):
-        if self.__event.get('isOffline') is not None:
-            return self.headers
-        return self.__request_context.get('authorizer', self.headers)
-
-    @property
     def headers(self):
-        headers = {k.lower(): v for k, v in self.__event.get('headers', {}).items()}
-        return headers
+        return dict(self.__wsgi.headers)
 
     @property
     def body(self):
         try:
-            content_type = self.headers.get('content-type', '').split(';')[0]
-            parser = self.__parsers.get(content_type, 'raw')
+            parser = self.__parsers.get(self.mimetype, 'raw')
             return getattr(self, parser)
         except Exception as error:
-            print(error)
-            return self.__body
+            logger.log(level='ERROR', log=error)
+            return self.__data
 
     @property
     def json(self):
-        return JsonHelper.decode(self.__body, True)
+        return self.__wsgi.get_json(force=True, cache=False)
 
     @property
     def form(self):
-        return dict(urllib.parse.parse_qsl(self.__body))
+        return self.__wsgi.form
 
     @property
     def xml(self):
-        return xmltodict.parse(self.__body)
+        return xmltodict.parse(self.__data)
+
+    @property
+    def files(self):
+        return self.__wsgi.files
 
     @property
     def graphql(self):
         try:
-            request = base64.b64decode(self.__body).decode('utf-8')
+            graphql_body = base64.b64decode(self.__data).decode('utf-8')
         except Exception as error:
-            print(error)
-            request = self.__body
-        return JsonHelper.decode(request)
+            logger.log(level='ERROR', log=error)
+            graphql_body = self.__data
+        return JsonHelper.decode(graphql_body)
 
     @property
     def raw(self):
-        return self.__body
-
-    @property
-    def params(self):
-        return {'query': self.query_params, 'path': self.path_params}
+        return self.__wsgi.get_data()
 
     @property
     def query_params(self):
-        if self.__event.get('queryStringParameters') is not None:
-            return self.__event['queryStringParameters']
-        return {}
+        return self.__wsgi.args
 
     @property
     def path_params(self):
@@ -163,27 +132,19 @@ class Request:
         self.__context = context
 
     @property
-    def event(self):
-        return self.__event
-
-    @property
     def timeout(self):
         return self.__timeout
-
-    @property
-    def full(self):
-        return {
-            'method': self.method,
-            'resource': self.resource,
-            'headers': self.headers,
-            'authorizer': self.authorizer,
-            'params': self.params,
-            'body': self.body,
-            'context': self.context
-        }
 
     def clear_path_params(self):
         self.__path_params = {}
 
     def __str__(self):
-        return JsonHelper.encode(self.full)
+        return JsonHelper.encode({
+            'method': self.method,
+            'resource': self.resource,
+            'headers': self.headers,
+            'query': self.query_params,
+            'path': self.path_params,
+            'body': self.body,
+            'context': self.context
+        })

@@ -13,14 +13,15 @@ class Response:
         self.__cors = kwargs.get('cors', True)
         self.__base64_encoded = False
         self.__compress = False
-        self.__content_type = ''
+        self.__mimetype = 'application/json'
+        self.__server_response = kwargs['server_response']
+        self.__wsgi = kwargs['wsgi']
+        self.__environ = kwargs['environ']
         self.__headers = {}
         self.__body = {}
 
     @property
     def headers(self):
-        if self.cors:
-            self.__set_cors()
         return self.__headers
 
     @headers.setter
@@ -29,14 +30,12 @@ class Response:
         self.__headers[key] = value
 
     @property
-    def content_type(self):
-        if self.is_json and not self.__content_type and not self.headers.get('content-type', self.headers.get('Content-Type')):
-            return 'application/json'
-        return self.__content_type if self.__content_type else self.headers.get('content-type', self.headers.get('Content-Type', ''))
+    def mimetype(self):
+        return self.__mimetype
 
-    @content_type.setter
-    def content_type(self, content_type ):
-        self.__content_type = content_type
+    @mimetype.setter
+    def mimetype(self, mimetype):
+        self.__mimetype = mimetype
 
     @property
     def cors(self):
@@ -45,7 +44,7 @@ class Response:
     @cors.setter
     def cors(self, access):
         self.__cors = access
-    
+
     @property
     def open_cors(self):
         return self.__cors
@@ -92,12 +91,11 @@ class Response:
 
     @property
     def body(self):
-        body = JsonHelper.encode(self.__body, raise_error=True) if self.is_json else self.__body
         if self.compress:
-            return self.__compress_body(body)
+            return self.__compress_body(JsonHelper.encode(self.__body, raise_error=True))
         if isinstance(self.__body, (dict, list, tuple)):
-            return body
-        return body
+            return JsonHelper.encode(self.__body, raise_error=True)
+        return self.__body
 
     @body.setter
     def body(self, body):
@@ -108,13 +106,9 @@ class Response:
         return self.__body
 
     @property
-    def full(self):
-        return {
-            'body': self.body,
-            'headers': self.headers,
-            'statusCode': self.code,
-            'isBase64Encoded': self.base64_encoded
-        }
+    def server(self):
+        response = self.__wsgi(self.body, mimetype=self.mimetype)
+        return response(self.__environ, self.__server_response)
 
     def set_error(self, key_path, message):
         error = {'key_path': key_path, 'message': message}
@@ -130,20 +124,3 @@ class Response:
         with gzip.GzipFile(fileobj=bytes_io, mode='w') as file:
             file.write(body.encode('utf-8'))
         return base64.b64encode(bytes_io.getvalue()).decode('ascii')
-
-    def __set_cors(self):
-        self.__headers['Access-Control-Allow-Origin'] = '*'
-        self.__headers['Access-Control-Allow-Headers'] = '*'
-
-    def __str__(self):
-        return str(
-            {
-                'hasErrors': self.has_errors,
-                'response': {
-                    'headers': self.full['headers'],
-                    'statusCode': self.full['statusCode'],
-                    'isBase64Encoded': self.full['isBase64Encoded'],
-                    'body': JsonHelper.decode(self.full['body'])
-                }
-            }
-        )
