@@ -1,6 +1,6 @@
 import time
 
-from acai_aws.apigateway.requirements import requirements
+from chilo.core.requirements import requirements
 
 @requirements()
 def post(request, response):

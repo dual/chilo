@@ -1,4 +1,5 @@
-from acai_aws.apigateway.requirements import requirements
+from chilo.core.requirements import requirements
+
 
 @requirements(required_route='/triple/{x}/{y}/{z}')
 def post(request, response):

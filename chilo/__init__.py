@@ -34,36 +34,21 @@ class Chilo:
     def route(self, environ, server_response):
         request = Request(wsgi=WSGIRequest(environ), timeout=self.__timeout)
         response = Response(cors=self.__cors, wsgi=WSGIResponse, environ=environ, server_response=server_response)
-        response.body = {
-            'cookies': request.cookies,
-            'protocal': request.protocol,
-            'content_type': request.content_type,
-            'mimetype': request.mimetype,
-            'host_url': request.host_url,
-            'method': request.method,
-            'path': request.path,
-            'headers': request.headers,
-            'body': request.body,
-            'query_params': request.query_params,
-            'path_params': request.path_params
-        }
+        try:
+            self.__log_verbose(title='request-received', log={'request': request})
+            self.__run_route_procedure(request, response)
+        except ApiTimeOutException as timeout_error:
+            kwargs = {'code': timeout_error.code, 'key_path': timeout_error.key_path, 'message': timeout_error.message, 'error': timeout_error}
+            self.__handle_error(request, response, self.__on_timeout, **kwargs)
+        except ApiException as api_error:
+            kwargs = {'code': api_error.code, 'key_path': api_error.key_path, 'message': api_error.message, 'error': api_error}
+            self.__handle_error(request, response, self.__on_error, **kwargs)
+        except Exception as error:
+            output = str(error) if self.__output_error else 'internal service error'
+            kwargs = {'code': 500, 'key_path': 'unknown', 'message': output, 'error': error}
+            self.__handle_error(request, response, **kwargs)
+        self.__log_verbose(title='request-processed', log={'request': request, 'response': response})
         return response.server
-
-        # try:
-        #     self.__log_verbose(title='request-received', log={'request': request})
-        #     self.__run_route_procedure(request, response)
-        # except ApiTimeOutException as timeout_error:
-        #     kwargs = {'code': timeout_error.code, 'key_path': timeout_error.key_path, 'message': timeout_error.message, 'error': timeout_error}
-        #     self.__handle_error(request, response, self.__on_timeout, **kwargs)
-        # except ApiException as api_error:
-        #     kwargs = {'code': api_error.code, 'key_path': api_error.key_path, 'message': api_error.message, 'error': api_error}
-        #     self.__handle_error(request, response, self.__on_error, **kwargs)
-        # except Exception as error:
-        #     output = str(error) if self.__output_error else 'internal service error'
-        #     kwargs = {'code': 500, 'key_path': 'unknown', 'message': output, 'error': error}
-        #     self.__handle_error(request, response, **kwargs)
-        # self.__log_verbose(title='request-processed', log={'request': request, 'response': response})
-        # return response.full
 
     def __run_route_procedure(self, request, response):
         endpoint = self.__resolver.get_endpoint(request)

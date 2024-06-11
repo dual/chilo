@@ -12,7 +12,7 @@ class Request:
     def __init__(self, **kwargs):
         self.__wsgi = kwargs['wsgi']
         self.__timeout = kwargs['timeout']
-        self.__data = self.__wsgi.get_data(cache=False, as_text=True)
+        self.__data = self.__wsgi.get_data(as_text=True, cache=False)
         self.__route = self.__wsgi.path
         self.__path_params = {}
         self.__context = {}
@@ -83,7 +83,7 @@ class Request:
 
     @property
     def json(self):
-        return self.__wsgi.get_json(force=True, cache=False)
+        return JsonHelper.decode(self.__data)
 
     @property
     def form(self):

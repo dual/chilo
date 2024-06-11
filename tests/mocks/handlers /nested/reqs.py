@@ -1,4 +1,5 @@
-from acai_aws.apigateway.requirements import requirements
+from chilo.core.requirements import requirements
+
 
 @requirements(
     required_body='v1-post-request-test'

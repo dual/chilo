@@ -1,4 +1,5 @@
-from acai_aws.apigateway.requirements import requirements
+from chilo.core.requirements import requirements
+
 
 @requirements(required_route='/user/{user_id}/item/{item_id}')
 def get(request, response):

@@ -1,4 +1,4 @@
-from acai_aws.apigateway.requirements import requirements
+from chilo.core.requirements import requirements
 
 from tests.mocks.common.mock_pydantic_class import UserRequest
 
