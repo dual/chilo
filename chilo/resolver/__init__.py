@@ -18,6 +18,9 @@ class Resolver:
     def auto_load(self):
         self.__scanner.load_importer_files()
 
+    def reset(self):
+        self.__scanner.reset()
+
     def get_endpoint(self, request):
         endpoint_module = self.__get_endpoint_module(request)
         if not hasattr(endpoint_module, request.method):
@@ -26,7 +29,7 @@ class Resolver:
         self.__assign_normalized_route(request, endpoint)
         self.__check_dynamic_route_and_apply_params(request, endpoint)
         self.__cacher.put(request.path, endpoint_module, self.__scanner.has_dynamic_route, self.__scanner.dynamic_parts)
-        self.__scanner.reset()
+        self.reset()
         return endpoint
 
     def __get_endpoint_module(self, request):

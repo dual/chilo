@@ -38,12 +38,15 @@ class Chilo:
             self.__log_verbose(title='request-received', log={'request': request})
             self.__run_route_procedure(request, response)
         except ApiTimeOutException as timeout_error:
+            self.__resolver.reset()
             kwargs = {'code': timeout_error.code, 'key_path': timeout_error.key_path, 'message': timeout_error.message, 'error': timeout_error}
             self.__handle_error(request, response, self.__on_timeout, **kwargs)
         except ApiException as api_error:
+            self.__resolver.reset()
             kwargs = {'code': api_error.code, 'key_path': api_error.key_path, 'message': api_error.message, 'error': api_error}
             self.__handle_error(request, response, self.__on_error, **kwargs)
         except Exception as error:
+            self.__resolver.reset()
             output = str(error) if self.__output_error else 'internal service error'
             kwargs = {'code': 500, 'key_path': 'unknown', 'message': output, 'error': error}
             self.__handle_error(request, response, **kwargs)
@@ -93,13 +96,10 @@ class Chilo:
             if error_func and callable(error_func):
                 error_func(request, response, kwargs.get('error'))
             else:
-                pass
-                # logger.log(level='ERROR', log={'request': request, 'response': response, 'error': kwargs})
+                logger.log(level='ERROR', log={'request': request, 'response': response, 'error': kwargs})
         except Exception as exception:
-            # logging.exception(exception)
-            pass
+            logging.exception(exception)
 
     def __log_verbose(self, title, log):
         if self.__verbose:
-            pass
-            # logger.log(level='INFO', log={'title': title, 'log': log})
+            logger.log(level='INFO', log={'title': title, 'log': log})

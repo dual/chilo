@@ -65,25 +65,39 @@ class ResolverScanner:
 
     def __get_import_path_file_tree(self, split_path, split_index, file_tree, file_pattern):
         if split_index < len(split_path):
-            import_part = None
             route_part = split_path[split_index].replace('-', '_')
             possible_directory = f'{route_part}'
             possible_file = file_pattern.replace('*', route_part) if '*' in file_pattern else f'{possible_directory}.py'
             if possible_directory in file_tree:
-                import_part = possible_directory
-                split_index = split_index - 1 if split_index + 1 == len(split_path) else split_index
+                self.__handle_directory_path_part(possible_directory, split_path, split_index, file_tree, file_pattern)
             elif possible_file in file_tree:
-                import_part = possible_file
+                self.__handle_file_path_part(possible_file, split_path, split_index, file_tree, file_pattern)
             elif file_tree.get('__dynamic_files') and file_tree['__dynamic_files']:
-                import_part = list(file_tree['__dynamic_files'])[0]
-                self.has_dynamic_route = True
-                self.dynamic_parts[split_index] = split_path[split_index]
-            if import_part is not None:
-                self.append_import_path(import_part)
-                file_leaf = self.determine_which_file_leaf(file_tree, import_part)
-                index_file = file_pattern.replace('*', import_part) if '*' in file_pattern else '__init__.py'
-                if '.py' not in import_part and split_index+1 == len(split_path) and index_file in file_leaf:
-                    self.append_import_path(index_file)
-                self.__get_import_path_file_tree(split_path, split_index+1, file_leaf, file_pattern)
+                self.__handle_dynamic_path_part(split_path, split_index, file_tree, file_pattern)
             else:
                 raise ApiException(code=404, message='route not found')
+
+    def __handle_directory_path_part(self, possible_directory, split_path, split_index, file_tree, file_pattern):
+        self.append_import_path(possible_directory)
+        if split_index+1 < len(split_path):
+            file_leaf = self.determine_which_file_leaf(file_tree, possible_directory)
+            self.__get_import_path_file_tree(split_path, split_index+1, file_leaf, file_pattern)
+        else:
+            index_file = file_pattern.replace('*', possible_directory) if '*' in file_pattern else '__init__.py'
+            self.append_import_path(index_file)
+
+    def __handle_file_path_part(self, possible_file, split_path, split_index, file_tree, file_pattern):
+        self.append_import_path(possible_file)
+        file_leaf = self.determine_which_file_leaf(file_tree, possible_file)
+        self.__get_import_path_file_tree(split_path, split_index+1, file_leaf, file_pattern)
+
+    def __handle_dynamic_path_part(self, split_path, split_index, file_tree, file_pattern):
+        file_part = list(file_tree['__dynamic_files'])[0]
+        self.append_import_path(file_part)
+        if '.py' not in file_part and split_index+1 == len(split_path):
+            index_file = file_pattern.replace('*', file_part) if '*' in file_pattern else '__init__.py'
+            self.append_import_path(index_file)
+        file_leaf = self.determine_which_file_leaf(file_tree, file_part)
+        self.has_dynamic_route = True
+        self.dynamic_parts[split_index] = split_path[split_index]
+        self.__get_import_path_file_tree(split_path, split_index+1, file_leaf, file_pattern)
