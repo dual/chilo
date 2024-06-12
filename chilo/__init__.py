@@ -93,10 +93,13 @@ class Chilo:
             if error_func and callable(error_func):
                 error_func(request, response, kwargs.get('error'))
             else:
-                logger.log(level='ERROR', log={'request': request, 'response': response, 'error': kwargs})
+                pass
+                # logger.log(level='ERROR', log={'request': request, 'response': response, 'error': kwargs})
         except Exception as exception:
-            logging.exception(exception)
+            # logging.exception(exception)
+            pass
 
     def __log_verbose(self, title, log):
         if self.__verbose:
-            logger.log(level='INFO', log={'title': title, 'log': log})
+            pass
+            # logger.log(level='INFO', log={'title': title, 'log': log})
