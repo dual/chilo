@@ -17,7 +17,7 @@ class ResolverScanner:
         self.importer.get_handlers_file_tree()
 
     def get_endpoint_module(self, request):
-        file_path, import_path = self._get_file_and_import_path(request.path)
+        file_path, import_path = self.__get_file_and_import_path(request.path)
         return self.importer.import_module_from_file(file_path, import_path)
 
     def get_import_path(self, relative_file_path):
@@ -45,7 +45,7 @@ class ResolverScanner:
         self.file_tree_climbed = True
         self.import_path = []
 
-    def _get_file_and_import_path(self, request_path):
+    def __get_file_and_import_path(self, request_path):
         split_path = self.get_request_path_as_list(request_path)
         route_path = self.__get_relative_path(split_path)
         file_path = self.__handler_pattern.split(f'{self.importer.file_separator}*')[0] + self.importer.file_separator + route_path
