@@ -3,7 +3,7 @@ from collections import defaultdict
 from jsonschema import Draft7Validator
 from pydantic import BaseModel, ValidationError
 
-from chilo.validator.schema import Schema
+from chilo.core.validator.schema import Schema
 
 
 class Validator:

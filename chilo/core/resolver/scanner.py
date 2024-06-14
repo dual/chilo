@@ -1,5 +1,5 @@
 from chilo.core.exception import ApiException
-from chilo.resolver.importer import ResolverImporter
+from chilo.core.resolver.importer import ResolverImporter
 
 
 class ResolverScanner:

@@ -2,13 +2,13 @@ import logging
 
 from werkzeug.wrappers import Request as WSGIRequest, Response as WSGIResponse
 
-from chilo.core.exception import ApiException, ApiTimeOutException
-from chilo.validator.config import ConfigValidator
 from chilo import logger
+from chilo.core.exception import ApiException, ApiTimeOutException
+from chilo.core.validator.config import ConfigValidator
 from chilo.core.request import Request
-from chilo.resolver import Resolver
+from chilo.core.resolver import Resolver
 from chilo.core.response import Response
-from chilo.validator import Validator
+from chilo.core.validator import Validator
 
 
 class Chilo:
@@ -38,19 +38,17 @@ class Chilo:
             self.__log_verbose(title='request-received', log={'request': request})
             self.__run_route_procedure(request, response)
         except ApiTimeOutException as timeout_error:
-            self.__resolver.reset()
             kwargs = {'code': timeout_error.code, 'key_path': timeout_error.key_path, 'message': timeout_error.message, 'error': timeout_error}
             self.__handle_error(request, response, self.__on_timeout, **kwargs)
         except ApiException as api_error:
-            self.__resolver.reset()
             kwargs = {'code': api_error.code, 'key_path': api_error.key_path, 'message': api_error.message, 'error': api_error}
             self.__handle_error(request, response, self.__on_error, **kwargs)
         except Exception as error:
-            self.__resolver.reset()
             output = str(error) if self.__output_error else 'internal service error'
             kwargs = {'code': 500, 'key_path': 'unknown', 'message': output, 'error': error}
             self.__handle_error(request, response, **kwargs)
         self.__log_verbose(title='request-processed', log={'request': request, 'response': response})
+        self.__resolver.reset()
         return response.server
 
     def __run_route_procedure(self, request, response):

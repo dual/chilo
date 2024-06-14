@@ -4,7 +4,7 @@ import urllib
 import xmltodict
 
 from chilo.core.json_helper import JsonHelper
-from chilo import logger
+from chilo.core import logger
 
 
 class Request:

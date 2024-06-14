@@ -1,7 +1,7 @@
-from chilo.resolver.cache import ResolverCache
+from chilo.core.resolver.cache import ResolverCache
 from chilo.core.endpoint import Endpoint
 from chilo.core.exception import ApiException
-from chilo.resolver.scanner import ResolverScanner
+from chilo.core.resolver.scanner import ResolverScanner
 
 
 class Resolver:
