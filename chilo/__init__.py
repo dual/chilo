@@ -2,7 +2,7 @@ import logging
 
 from werkzeug.wrappers import Request as WSGIRequest, Response as WSGIResponse
 
-from chilo import logger
+from chilo.core import logger
 from chilo.core.exception import ApiException, ApiTimeOutException
 from chilo.core.validator.config import ConfigValidator
 from chilo.core.request import Request

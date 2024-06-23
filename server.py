@@ -3,7 +3,7 @@ from chilo import Chilo
 
 api_server = Chilo(
     base_path='/',
-    handlers='tests/mocks/handlers',
+    handlers='tests/mocks/directory/handlers',
 )
 
 
