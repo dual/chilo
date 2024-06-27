@@ -1,7 +1,8 @@
+import os
 import importlib.util
+from werkzeug.serving import run_simple
 
 from chilo import Chilo
-import os
 
 
 def run_server(args):
@@ -13,36 +14,12 @@ def run_server(args):
     spec.loader.exec_module(module)
     matches = [v for v in module.__dict__.values() if isinstance(v, Chilo)]
     api = matches[0]
-    print(api.test)
+    run_simple(args.host, args.port, api.route, use_reloader=args.reload, use_debugger=args.debugger)
 
 
-# if __name__ == '__main__':
-    #     run_simple('127.0.0.1', 5000, api_server.route)
-
-    # def find_best_app(module: ModuleType) -> Flask:
-    #     """Given a module instance this tries to find the best possible
-    #     application in the module or raises an exception.
-    #     """
-    #     from . import Flask
-
-    #     # Search for the most common names first.
-    #     for attr_name in ("app", "application"):
-    #         app = getattr(module, attr_name, None)
-
-    #         if isinstance(app, Flask):
-    #             return app
-
-    #     # Otherwise find the only object that is a Flask instance.
-    #     matches = [v for v in module.__dict__.values() if isinstance(v, Flask)]
-
-    # run_simple(
-    #     host,
-    #     port,
-    #     app,
-    #     use_reloader=reload,
-    #     use_debugger=debugger,
-    #     threaded=with_threads,
-    #     ssl_context=cert,
-    #     extra_files=extra_files,
-    #     exclude_patterns=exclude_patterns,
-    # )
+# @TODO
+# Create class for inputs for sever (with defaults)
+# create a class for importing the module
+# Create class for validation of those inputs
+# Add props to chilo init file for server config-based properties
+# Add exceptions where appropriate
