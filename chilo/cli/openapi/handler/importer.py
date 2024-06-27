@@ -1,7 +1,7 @@
 import importlib.util
 import os
 
-from chilo.openapi.handler.module import HandlerModule
+from chilo.cli.openapi.handler.module import HandlerModule
 
 
 class HandlerImporter:

@@ -1,11 +1,7 @@
-from werkzeug.serving import run_simple
 from chilo import Chilo
 
-api_server = Chilo(
+
+api = Chilo(
     base_path='/',
     handlers='tests/mocks/directory/handlers',
 )
-
-
-if __name__ == '__main__':
-    run_simple('127.0.0.1', 5000, api_server.route)

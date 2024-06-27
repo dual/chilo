@@ -31,5 +31,6 @@ pytest-cov = "*"
 
 [scripts]
 test = "python -m unittest discover"
+cli = "python -m chilo serve --api server.py"
 serve = "python server.py"
 gunicorn = "gunicorn --workers=1 chilo.run:serve"
