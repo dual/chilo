@@ -1,0 +1,36 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[requires]
+python_version = "3.9"
+
+[pipenv]
+allow_prereleases = true
+
+[packages]
+art = "*"
+icecream = "*"
+jsonref = "*"
+jsonschema = "*"
+openapi-spec-validator = "*"
+pydantic = "*"
+pyyaml = "*"
+simplejson = "*"
+Werkzeug = "*"
+xmltodict = "*"
+
+[dev-packages]
+autopep8 = "*"
+gunicorn = "*"
+pytest = "*"
+pytest-html = "*"
+pytest-cov = "*"
+
+[scripts]
+test = "python -m unittest discover"
+coverage = "coverage run --source chilo_api/ -m pytest tests/unit --cov=chilo_api --junitxml ./coverage/reports/junit.xml --cov-report xml:./coverage/reports/cov.xml --html=./coverage/reports/index.html --self-contained-html --cov-report html:./coverage/pretty -p no:warnings -o log_cli=true"
+api = "python -m chilo_api serve --api=api --reload=true"
+openapi = "python -m chilo_api generate-openapi --api=api --output=tests/outputs --format=yml,json --delete"
+gunicorn = "gunicorn 'chilo_api.gunicorn:run(api=\"api.py\")' --workers=1 --bind=127.0.0.1:3000"

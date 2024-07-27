@@ -1,0 +1,675 @@
+openapi: 3.0.1
+info:
+    version: 1.0.0
+    title: Chilo Generator
+    license:
+        name: MIT
+tags:
+    - name: chilo
+servers: []
+paths:
+    /:
+        get:
+            tags:
+                - chilo
+            operationId: GetInitFile
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /raise-exception:
+        post:
+            tags:
+                - chilo
+            operationId: PostRaiseExceptionChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /timeout:
+        get:
+            tags:
+                - chilo
+            operationId: GetTimeoutChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        post:
+            tags:
+                - chilo
+            operationId: PostTimeoutChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /pydantic:
+        post:
+            tags:
+                - chilo
+            operationId: PostPydanticChiloGenerated
+            deprecated: false
+            parameters: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/post-pydantic-request-body"
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        put:
+            tags:
+                - chilo
+            operationId: PutPydanticChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/put-pydantic-response-body"
+    /full-handler:
+        get:
+            tags:
+                - chilo
+            operationId: GetFullHandlerChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        patch:
+            tags:
+                - chilo
+            operationId: PatchFullHandlerChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        post:
+            tags:
+                - chilo
+            operationId: PostFullHandlerChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /form-file:
+        get:
+            tags:
+                - chilo
+            operationId: GetFormFileChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        post:
+            tags:
+                - chilo
+            operationId: PostFormFileChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /some/route/{id}:
+        get:
+            tags:
+                - chilo
+            operationId: GetSomeRouteIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        post:
+            tags:
+                - chilo
+            operationId: PostSomeRouteIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        put:
+            tags:
+                - chilo
+            operationId: PutSomeRouteIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        patch:
+            tags:
+                - chilo
+            operationId: PatchSomeRouteIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        delete:
+            tags:
+                - chilo
+            operationId: DeleteSomeRouteIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /basic:
+        get:
+            tags:
+                - chilo
+            operationId: GetBasicChiloGenerated
+            deprecated: false
+            parameters:
+                - in: header
+                  name: x-api-key
+                  required: true
+                  schema:
+                      type: string
+                - in: header
+                  name: content-type
+                  required: false
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        patch:
+            tags:
+                - chilo
+            operationId: PatchBasicChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        post:
+            tags:
+                - chilo
+            operationId: PostBasicChiloGenerated
+            deprecated: false
+            security:
+                - ChiloGenerated: []
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        put:
+            tags:
+                - chilo
+            operationId: PutBasicChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unhandled-exception:
+        post:
+            tags:
+                - chilo
+            operationId: PostUnhandledExceptionChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /pattern-dynamic/pattern-dynamic-handler:
+        get:
+            tags:
+                - chilo
+            operationId: GetPatternDynamicPatternDynamicHandlerChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /pattern-dynamic/{id}:
+        get:
+            tags:
+                - chilo
+            operationId: GetUnitTestV1PatternDynamicIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /auto:
+        get:
+            tags:
+                - chilo
+            operationId: GetAutoChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        post:
+            tags:
+                - chilo
+            operationId: PostAutoChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        put:
+            tags:
+                - chilo
+            operationId: PutAutoChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /user:
+        get:
+            tags:
+                - chilo
+            operationId: GetUserUserChiloGenerated
+            deprecated: false
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /user/{user_id}:
+        get:
+            tags:
+                - chilo
+            operationId: GetUserUserIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: user_id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /user/{user_id}/item:
+        get:
+            tags:
+                - chilo
+            operationId: GetUserUserIdItemChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: user_id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /user/{user_id}/item/{item_id}:
+        get:
+            tags:
+                - chilo
+            operationId: GetUserUserIdItemItemIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: user_id
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: item_id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /nested/{nested_id}:
+        patch:
+            tags:
+                - chilo
+            operationId: PatchNestedNestedIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: header
+                  name: content-type
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: nested_id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /nested:
+        get:
+            tags:
+                - chilo
+            operationId: GetNestedChiloGenerated
+            deprecated: false
+            parameters:
+                - in: query
+                  name: auth_id
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: email
+                  required: false
+                  schema:
+                      type: string
+                - in: query
+                  name: name
+                  required: false
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /nested/reqs:
+        delete:
+            tags:
+                - chilo
+            operationId: DeleteNestedReqsChiloGenerated
+            deprecated: false
+            parameters:
+                - in: header
+                  name: content-type
+                  required: true
+                  schema:
+                      type: string
+                - in: header
+                  name: correlation-id
+                  required: false
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        get:
+            tags:
+                - chilo
+            operationId: GetNestedReqsChiloGenerated
+            deprecated: false
+            parameters:
+                - in: query
+                  name: auth_id
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: email
+                  required: false
+                  schema:
+                      type: string
+                - in: query
+                  name: name
+                  required: false
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        post:
+            tags:
+                - chilo
+            operationId: PostNestedReqsChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /triple:
+        get:
+            tags:
+                - chilo
+            operationId: GetTripleChiloGenerated
+            deprecated: false
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /triple/{x}/{y}/{z}:
+        post:
+            tags:
+                - chilo
+            operationId: PostTripleXYZChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: x
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: y
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: z
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+components:
+    securitySchemes:
+        ChiloGenerated:
+            type: apiKey
+            in: header
+            name: CHANGE-ME
+    schemas:
+        post-pydantic-request-body:
+            properties:
+                id:
+                    title: Id
+                    type: integer
+                email:
+                    title: Email
+                    type: string
+                active:
+                    title: Active
+                    type: boolean
+                favorites:
+                    items:
+                        type: string
+                    title: Favorites
+                    type: array
+                notification_config:
+                    additionalProperties:
+                        type: boolean
+                    title: Notification Config
+                    type: object
+            required:
+                - id
+                - email
+                - active
+                - favorites
+                - notification_config
+            title: UserRequest
+            type: object
+        put-pydantic-response-body:
+            type: object
+            required:
+                - id
+                - body
+            additionalProperties: false
+            properties:
+                id:
+                    type: string
+                body:
+                    type: object
+                dict:
+                    type: boolean
+        v1-patch-request-test:
+            type: object
+            required:
+                - id
+                - body
+            additionalProperties: false
+            properties:
+                id:
+                    type: string
+                body:
+                    type: object
+                dict:
+                    type: boolean
+        v1-required-response:
+            type: object
+            required:
+                - id
+                - body
+            additionalProperties: false
+            properties:
+                id:
+                    type: string
+                body:
+                    type: object
+                dict:
+                    type: boolean
+        v1-post-request-test:
+            properties:
+                id:
+                    title: Id
+                    type: integer
+                email:
+                    title: Email
+                    type: string
+                active:
+                    title: Active
+                    type: boolean
+                favorites:
+                    items:
+                        type: string
+                    title: Favorites
+                    type: array
+                notification_config:
+                    additionalProperties:
+                        type: boolean
+                    title: Notification Config
+                    type: object
+            required:
+                - id
+                - email
+                - active
+                - favorites
+                - notification_config
+            title: UserRequest
+            type: object

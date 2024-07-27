@@ -1,0 +1,89 @@
+version: 2.1
+orbs:
+    sonarcloud: sonarsource/sonarcloud@2.0.0
+commands:
+    start-workflow-timer:
+        steps:
+            - run:
+                name: Cancel build after set time
+                background: true
+                command: |
+                    sleep 180
+                    echo "Canceling workflow because too much time has elapsed"
+                    curl -X POST --header "Content-Type: application/json" "https://circleci.com/api/v2/workflow/${CIRCLE_WORKFLOW_ID}/cancel?circle-token=${CIRCLE_TOKEN}"
+    setup-artifacts:
+        steps:
+            - run: mkdir ./coverage && mkdir ./coverage/lint && mkdir ./coverage/reports && mkdir ./coverage/pretty || exit 0
+    setup-mock-unit-test-api:
+        steps:
+            - run: ln -s tests/mocks/settings/unit_test_api.py api.py
+    python-install:
+        steps:
+            - run: pip install pipenv
+            - run: pipenv install
+    python-test-install:
+        steps:
+            - restore_cache:
+                key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+            - run: pip install pipenv
+            - run: pipenv install --dev
+            - save_cache:
+                key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+                paths:
+                    - ".venv"
+    python-unit-test-report:
+        steps:
+            - run: pipenv run coverage
+            - store_artifacts:
+                path: ./coverage
+            - store_test_results:
+                path: ./coverage/reports
+    pypi-setup:
+        steps:
+            - run: echo -e "[pypi]" >> ~/.pypirc
+            - run: echo -e "username = __token__" >> ~/.pypirc
+            - run: echo -e "password = $PYPI_TOKEN" >> ~/.pypirc
+    pypi-deploy:
+        steps:
+            - run: python3 -m pip install --user --upgrade setuptools wheel
+            - run: python3 setup.py sdist bdist_wheel
+            - run: python3 -m pip install --user --upgrade twine
+            - run: python3 -m twine upload dist/*
+jobs:
+    install-build-test:
+        docker:
+            - image: cimg/python:3.9
+        steps:
+            - start-workflow-timer
+            - checkout
+            - python-test-install
+            - setup-artifacts
+            - setup-mock-unit-test-api
+            - python-unit-test-report
+            - sonarcloud/scan
+    install-build-deploy:
+        docker:
+            - image: cimg/python:3.9
+        steps:
+            - checkout
+            - python-install
+            - pypi-setup
+            - pypi-deploy
+workflows:
+    install-build-deploy-workflow:
+        jobs:
+            - install-build-deploy:
+                filters:
+                    tags:
+                        only: /.*/
+                    branches:
+                        ignore: /.*/
+    install-build-test-workflow:
+        jobs:
+            - install-build-test:
+                context:
+                    - sonarcloud
+                    - circleci
+                filters:
+                    tags:
+                        ignore: /.*/

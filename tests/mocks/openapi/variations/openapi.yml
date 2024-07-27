@@ -1,0 +1,1118 @@
+openapi: "3.1.0"
+info:
+    title: index
+    version: "1.0"
+servers:
+    - url: "http://localhost:3000"
+tags:
+    - name: unit-test
+paths:
+    /unit-test/v1/:
+        get:
+            tags:
+                - chilo
+            operationId: GetInitFile
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/unhandled-exception:
+        post:
+            tags:
+                - chilo
+            operationId: PostUnhandledException
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/optional-params:
+        get:
+            tags:
+                - unit-test
+            operationId: GetOptionalParams
+            deprecated: false
+            parameters:
+                - in: header
+                  name: x-api-key
+                  required: true
+                  schema:
+                      type: string
+                - in: header
+                  name: x-correlation-id
+                  required: false
+                  schema:
+                      type: string
+                - in: query
+                  name: first
+                  required: false
+                  schema:
+                      type: string
+                - in: query
+                  name: group
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                200:
+                    description: valid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/v1-required-response"
+    /unit-test/v1/raise-exception:
+        post:
+            tags:
+                - chilo
+            operationId: PostRaiseExceptionChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/timeout:
+        get:
+            tags:
+                - chilo
+            operationId: GetTimeoutChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        post:
+            tags:
+                - chilo
+            operationId: PostTimeoutChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/pydantic:
+        post:
+            tags:
+                - chilo
+            operationId: PostPydanticChiloGenerated
+            deprecated: false
+            parameters: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/post-pydantic-request-body"
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        put:
+            tags:
+                - chilo
+            operationId: PutPydanticChiloGenerated
+            deprecated: false
+            parameters: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/put-pydantic-request-body"
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1:
+        put:
+            tags:
+                - chilo
+            operationId: Putv1ChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/put-pydantic-response-body"
+    /unit-test/v1/full-handler:
+        get:
+            tags:
+                - chilo
+            operationId: GetFullHandlerChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        patch:
+            tags:
+                - chilo
+            operationId: PatchFullHandlerChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        post:
+            tags:
+                - chilo
+            operationId: PostFullHandlerChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/form-file:
+        get:
+            tags:
+                - chilo
+            operationId: GetFormFileChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        post:
+            tags:
+                - chilo
+            operationId: PostFormFileChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/some/route/{id}:
+        get:
+            tags:
+                - chilo
+            operationId: GetSomeRouteIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        post:
+            tags:
+                - chilo
+            operationId: PostSomeRouteIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        put:
+            tags:
+                - chilo
+            operationId: PutSomeRouteIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        patch:
+            tags:
+                - chilo
+            operationId: PatchSomeRouteIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        delete:
+            tags:
+                - chilo
+            operationId: DeleteSomeRouteIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/basic:
+        get:
+            tags:
+                - chilo
+            operationId: GetBasicChiloGenerated
+            deprecated: false
+            parameters:
+                - in: header
+                  name: x-api-key
+                  required: true
+                  schema:
+                      type: string
+                - in: header
+                  name: content-type
+                  required: false
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        patch:
+            tags:
+                - chilo
+            operationId: PatchBasicChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        post:
+            tags:
+                - chilo
+            operationId: PostBasicChiloGenerated
+            deprecated: false
+            security:
+                - ChiloGenerated: []
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        put:
+            tags:
+                - chilo
+            operationId: PutBasicChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unhandled-exception:
+        post:
+            tags:
+                - chilo
+            operationId: PostUnhandledExceptionChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/pattern-dynamic/pattern-dynamic-handler:
+        get:
+            tags:
+                - chilo
+            operationId: GetPatternDynamicPatternDynamicHandlerChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/pattern-dynamic/{id}:
+        get:
+            tags:
+                - chilo
+            operationId: GetUnitTestV1PatternDynamicIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/auto:
+        get:
+            tags:
+                - unit-test
+            operationId: GetAuto
+            deprecated: false
+            security:
+                - ApiKeyAuth: []
+            parameters:
+                - in: header
+                  name: x-api-key
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                200:
+                    description: valid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/v1-required-response"
+        post:
+            tags:
+                - unit-test
+            operationId: PostAuto
+            deprecated: false
+            parameters:
+                - in: header
+                  name: x-api-key
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/v1-test-request"
+            responses:
+                200:
+                    description: valid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/v1-required-response"
+        put:
+            tags:
+                - unit-test
+            operationId: PutAuto
+            deprecated: false
+            security:
+                - ApiKeyAuth: []
+            parameters:
+                - in: header
+                  name: x-api-key
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                200:
+                    description: valid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/v1-required-response"
+    /unit-test/v1/user:
+        get:
+            tags:
+                - chilo
+            operationId: GetUserUserChiloGenerated
+            deprecated: false
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/user/{user_id}:
+        get:
+            tags:
+                - chilo
+            operationId: GetUserUserIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: user_id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/user/{user_id}/item:
+        get:
+            tags:
+                - chilo
+            operationId: GetUserUserIdItemChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: user_id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/user/{user_id}/item/{item_id}:
+        get:
+            tags:
+                - chilo
+            operationId: GetUserUserIdItemItemIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: user_id
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: item_id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/nested/{nested_id}:
+        patch:
+            tags:
+                - chilo
+            operationId: PatchNestedNestedIdChiloGenerated
+            deprecated: false
+            parameters:
+                - in: header
+                  name: content-type
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: nested_id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/nested:
+        get:
+            tags:
+                - chilo
+            operationId: GetNestedChiloGenerated
+            deprecated: false
+            parameters:
+                - in: query
+                  name: auth_id
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: email
+                  required: false
+                  schema:
+                      type: string
+                - in: query
+                  name: name
+                  required: false
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/nested/reqs:
+        delete:
+            tags:
+                - chilo
+            operationId: DeleteNestedReqsChiloGenerated
+            deprecated: false
+            parameters:
+                - in: header
+                  name: content-type
+                  required: true
+                  schema:
+                      type: string
+                - in: header
+                  name: correlation-id
+                  required: false
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        get:
+            tags:
+                - chilo
+            operationId: GetNestedReqsChiloGenerated
+            deprecated: false
+            parameters:
+                - in: query
+                  name: auth_id
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: email
+                  required: false
+                  schema:
+                      type: string
+                - in: query
+                  name: name
+                  required: false
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+        post:
+            tags:
+                - chilo
+            operationId: PostNestedReqsChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/triple:
+        get:
+            tags:
+                - chilo
+            operationId: GetTripleChiloGenerated
+            deprecated: false
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/triple/{x}/{y}/{z}:
+        post:
+            tags:
+                - chilo
+            operationId: PostTripleXYZChiloGenerated
+            deprecated: false
+            parameters:
+                - in: path
+                  name: x
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: y
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: z
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
+    /unit-test/v1/schema:
+        get:
+            tags:
+                - unit-test
+            operationId: GetSchema
+            deprecated: false
+            parameters:
+                - in: query
+                  name: test_id
+                  required: false
+                  schema:
+                      type: string
+                - in: query
+                  name: unit_id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                200:
+                    description: valid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/v1-required-response"
+        post:
+            tags:
+                - unit-test
+            operationId: PostSchema
+            deprecated: false
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/v1-post-request-test"
+            responses:
+                200:
+                    description: valid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/v1-required-response"
+        patch:
+            tags:
+                - unit-test
+            operationId: PatchSchema
+            deprecated: false
+            parameters:
+                - in: header
+                  name: key
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: unit_id
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/v1-patch-request-test"
+            responses:
+                200:
+                    description: valid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/v1-required-response"
+    /unit-test/v1/schema/{test_id}:
+        put:
+            tags:
+                - unit-test
+            operationId: PutSchemaWithId
+            deprecated: false
+            parameters:
+                - in: header
+                  name: x-api-key
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: test_id
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/v1-test-request"
+            responses:
+                200:
+                    description: valid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/v1-required-response"
+    /unit-test/v1/auto/{id}:
+        get:
+            tags:
+                - unit-test
+            operationId: GetAutoID
+            deprecated: false
+            parameters:
+                - in: header
+                  name: x-api-key
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                200:
+                    description: valid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/v1-required-response"
+        put:
+            tags:
+                - unit-test
+            operationId: PutAutoID
+            deprecated: false
+            parameters:
+                - in: header
+                  name: x-api-key
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/v1-test-request"
+            responses:
+                200:
+                    description: valid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/v1-required-response"
+        delete:
+            tags:
+                - unit-test
+            operationId: DeleteAuto
+            deprecated: false
+            parameters:
+                - in: header
+                  name: x-api-key
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: operation
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                200:
+                    description: valid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/v1-required-response"
+components:
+    securitySchemes:
+        ApiKeyAuth:
+            type: apiKey
+            in: header
+            name: x-api-key
+        ChiloGenerated:
+            type: apiKey
+            in: header
+            name: x-api-key
+    schemas:
+        post-pydantic-request-body:
+            type: object
+            required:
+                - id
+                - email
+                - active
+                - favorites
+                - notification_config
+            additionalProperties: false
+            properties:
+                id:
+                    title: Id
+                    type: integer
+                email:
+                    title: Email
+                    type: string
+                active:
+                    title: Active
+                    type: boolean
+                favorites:
+                    items:
+                        type: string
+                    title: Favorites
+                    type: array
+                notification_config:
+                    additionalProperties:
+                        type: boolean
+                    title: Notification Config
+                    type: object
+        put-pydantic-request-body:
+            type: object
+            additionalProperties: false
+            properties:
+                id:
+                    title: Id
+                    type: integer
+                email:
+                    title: Email
+                    type: string
+                active:
+                    title: Active
+                    type: boolean
+                favorites:
+                    items:
+                        type: string
+                    title: Favorites
+                    type: array
+                notification_config:
+                    additionalProperties:
+                        type: boolean
+                    title: Notification Config
+                    type: object
+        put-pydantic-response-body:
+            type: object
+            required:
+                - id
+                - body
+            additionalProperties: false
+            properties:
+                id:
+                    type: string
+                body:
+                    type: object
+                dict:
+                    type: boolean
+        v1-test-reference-model:
+            type: object
+            properties:
+                test_id:
+                    type: string
+                object_key:
+                    type: object
+                    properties:
+                        string_key:
+                            type: string
+                array_number:
+                    type: array
+                    items:
+                        type: number
+                array_objects:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            array_string_key:
+                                type: string
+                            array_number_key:
+                                type: number
+                fail_id:
+                    type: string
+        v1-test-request:
+            allOf:
+                - $ref: "#/components/schemas/v1-test-reference-model"
+                - required:
+                      - test_id
+                      - object_key
+                      - array_number
+                      - array_objects
+        v1-test-fail-request:
+            allOf:
+                - $ref: "#/components/schemas/v1-test-reference-model"
+                - required:
+                      - test_id
+                      - object_key
+                      - array_number
+                      - array_objects
+                      - fail_id
+        v1-test-nullable-field:
+            type: object
+            required:
+                - nullable_field
+                - non_nullable_field
+            properties:
+                nullable_field:
+                    type: string
+                    nullable: true
+                non_nullable_field:
+                    type: string
+        v1-required-response:
+            $ref: "#/components/schemas/v1-response-test-all-of"
+        v1-response-test-all-of:
+            allOf:
+                - $ref: "#/components/schemas/v1-response-page"
+                - type: object
+                  required:
+                      - data
+                  properties:
+                      data:
+                          $ref: "#/components/schemas/v1-response-result"
+        v1-response-page:
+            type: object
+            properties:
+                page_number:
+                    type: number
+            required:
+                - page_number
+        v1-response-result:
+            type: object
+            required:
+                - id
+            properties:
+                id:
+                    type: string
+        v1-response-fail:
+            type: object
+            required:
+                - id
+            properties:
+                id:
+                    type: number
+        v1-post-request-test:
+            type: object
+            required:
+                - name
+                - email
+                - phone
+                - active
+            properties:
+                name:
+                    type: string
+                email:
+                    type: string
+                phone:
+                    type: number
+                active:
+                    type: boolean
+        v1-patch-request-test:
+            type: object
+            required:
+                - test_id
+            properties:
+                test_id:
+                    type: string
+                name:
+                    type: string
+                email:
+                    type: string
+                phone:
+                    type: number
+                active:
+                    type: boolean
+        v1-ddb-record:
+            type: object
+            required:
+                - example_id
+                - note
+                - active
+                - personal
+                - transportation
+            properties:
+                example_id:
+                    type: string
+                note:
+                    type: string
+                active:
+                    type: boolean
+                personal:
+                    type: object
+                    properties:
+                        gender:
+                            type: string
+                        last_name:
+                            type: string
+                        first_name:
+                            type: string
+                transportation:
+                    type: array
+                    items:
+                        type: string
+        v1-ddb-record-fail:
+            type: object
+            required:
+                - example_id
+                - note
+                - active
+                - transportation
+            properties:
+                example_id:
+                    type: string
+                note:
+                    type: string
+                active:
+                    type: number
+                transportation:
+                    type: array
+                    items:
+                        type: string
+        v1-schema-factory-test:
+            type: object
+            required:
+                - id
+                - body
+            properties:
+                id:
+                    type: string
+                body:
+                    type: object
+                file:
+                    type: boolean
+        v1-required-body-test:
+            type: object
+            required:
+                - id
+                - email
+                - active
+                - favorites
+                - notification_config
+            properties:
+                id:
+                    type: integer
+                email:
+                    type: string
+                active:
+                    type: boolean
+                favorites:
+                    type: array
+                    items:
+                        type: string
+                notification_config:
+                    type: object
