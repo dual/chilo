@@ -108,10 +108,10 @@ class Router:
             self.__validator.validate_request(request, response, endpoint.requirements)
 
     def __run_response_validation(self, request, response, endpoint):
-        if not response.has_errors and self.__openapi_validate_request and self.__openapi_validate_response:
-            self.__validator.openapi_validate_response_with_openapi(request, response)
-        elif not response.has_errors and self.__openapi_validate_response and endpoint.has_required_response:
-            self.__validator.openapi_validate_response(response, endpoint.requirements)
+        if not response.has_errors and self.__openapi_validate_response:
+            self.__validator.validate_response_with_openapi(request, response)
+        elif not response.has_errors and endpoint.has_required_response:
+            self.__validator.validate_response(response, endpoint.requirements)
 
     def __run_after_all(self, request, response, endpoint):
         if not response.has_errors and self.__after_all and callable(self.__after_all):

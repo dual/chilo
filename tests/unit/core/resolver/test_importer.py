@@ -6,7 +6,7 @@ from chilo_api.core.resolver.importer import ResolverImporter
 class ResolverImporterTest(unittest.TestCase):
 
     def test_bad_handlers_multi_dynamic_files(self):
-        importer = ResolverImporter(handlers='tests/mocks/handlers/invalid/bad_structure/multi_dynamic')
+        importer = ResolverImporter(handlers='tests/mocks/handlers/unit_tests/invalid/bad_structure/multi_dynamic')
         try:
             importer.get_handlers_file_tree()
             self.assertTrue(False)
@@ -16,7 +16,7 @@ class ResolverImporterTest(unittest.TestCase):
             self.assertTrue(False)
 
     def test_bad_handlers_same_file_and_directory_names(self):
-        importer = ResolverImporter(handlers='tests/mocks/handlers/invalid/bad_structure/same_names')
+        importer = ResolverImporter(handlers='tests/mocks/handlers/unit_tests/invalid/bad_structure/same_names')
         try:
             importer.get_handlers_file_tree()
             self.assertTrue(False)

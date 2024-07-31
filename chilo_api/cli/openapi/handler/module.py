@@ -34,7 +34,7 @@ class HandlerModule:
     @property
     def route_path(self):
         if self.__requirements.get('required_route'):
-            self.__route_path = self.__requirements['required_route']
+            self.__route_path = f"{self.__base_path}{self.__requirements['required_route']}"
         if not self.__route_path:
             self.__route_path = self.__compose_route_path()
         return self.__route_path if self.__route_path.startswith('/') else f'/{self.__route_path}'
@@ -102,8 +102,9 @@ class HandlerModule:
         dirty_route = self.__file_path.split(self.__handler_base)[1]
         no_py_route = dirty_route.replace('.py', '')
         no_init_route = no_py_route.replace('__init__', '')
+        hyphonated = no_init_route.replace('_', '-')
         clean_route = [self.__base_path]
-        for route in no_init_route.split(os.sep):
+        for route in hyphonated.split(os.sep):
             if route.startswith('_'):  # pragma: no cover
                 route = ''.join(route.split('_')[1])
                 route = f'{{{route}}}'

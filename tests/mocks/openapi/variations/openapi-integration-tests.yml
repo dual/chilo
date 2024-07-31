@@ -1,0 +1,306 @@
+openapi: 3.1.0
+info:
+    version: 1.0.0
+    title: Chilo Generator
+    license:
+        name: MIT
+tags:
+-   name: basic-v1
+servers: []
+paths:
+    /basic/v1/request-class:
+        get:
+            tags:
+                - basic-v1
+            operationId: GetBasicV1RequestClassChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json: {}
+    /basic/v1/required-body:
+        patch:
+            tags:
+                - basic-v1
+            operationId: PatchBasicV1RequiredBodyChiloGenerated
+            deprecated: false
+            parameters: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/patch-basic-v1-required-body-request-body'
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json: {}
+        post:
+            tags:
+                - basic-v1
+            operationId: PostBasicV1RequiredBodyChiloGenerated
+            deprecated: false
+            parameters: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/v1-post-required-body'
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json: {}
+        put:
+            tags:
+                - basic-v1
+            operationId: PutBasicV1RequiredBodyChiloGenerated
+            deprecated: false
+            parameters: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/put-basic-v1-required-body-request-body'
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json: {}
+    /basic/v1/auth-required:
+        get:
+            tags:
+                - basic-v1
+            operationId: GetBasicV1AuthRequiredChiloGenerated
+            deprecated: false
+            security:
+            -   ApiKey: []
+            parameters: []
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json: {}
+    /basic/v1:
+        get:
+            tags:
+                - basic-v1
+            operationId: GetBasicV1ChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json: {}
+    /basic/v1/various-requirements:
+        delete:
+            tags:
+                - basic-v1
+            operationId: DeleteBasicV1VariousRequirementsChiloGenerated
+            deprecated: false
+            parameters:
+            -   in: query
+                name: first
+                required: false
+                schema:
+                    type: string
+            -   in: query
+                name: middle
+                required: false
+                schema:
+                    type: string
+            -   in: query
+                name: last
+                required: false
+                schema:
+                    type: string
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json: {}
+        get:
+            tags:
+                - basic-v1
+            operationId: GetBasicV1VariousRequirementsChiloGenerated
+            deprecated: false
+            parameters:
+            -   in: header
+                name: x-api-key
+                required: true
+                schema:
+                    type: string
+            -   in: query
+                name: user_type
+                required: true
+                schema:
+                    type: string
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json: {}
+    /basic/v1/before-after:
+        post:
+            tags:
+            - basic-v1
+            operationId: PostBasicV1BeforeAfterChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json: {}
+    /basic/v1/no-requirements:
+        get:
+            tags:
+            - basic-v1
+            operationId: GetBasicV1NoRequirementsChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json: {}
+    /basic/v1/custom-params:
+        get:
+            tags:
+            - basic-v1
+            operationId: GetBasicV1CustomParamsChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json: {}
+    /basic/v1/dynamic/{dynamic_id}/{some_var}/{last_var}:
+        delete:
+            tags:
+            - basic-v1
+            operationId: DeleteBasicV1DynamicDynamicIdSomeVarLastVarChiloGenerated
+            deprecated: false
+            parameters:
+            -   in: path
+                name: dynamic_id
+                required: true
+                schema:
+                    type: string
+            -   in: path
+                name: some_var
+                required: true
+                schema:
+                    type: string
+            -   in: path
+                name: last_var
+                required: true
+                schema:
+                    type: string
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json: {}
+    /basic/v1/dynamic/{dynamic_id}:
+        get:
+            tags:
+            - basic-v1
+            operationId: GetBasicV1DynamicDynamicIdChiloGenerated
+            deprecated: false
+            parameters:
+            -   in: path
+                name: dynamic_id
+                required: true
+                schema:
+                    type: string
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json: {}
+    /basic/v1/dynamic:
+        get:
+            tags:
+            - basic-v1
+            operationId: GetBasicV1DynamicChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json: {}
+components:
+    securitySchemes:
+        ApiKey:
+            type: apiKey
+            in: header
+            name: x-api-key
+    schemas:
+        v1-post-required-body:
+            type: object
+            additionalProperties: false
+            required:
+                - id
+                - body
+                - dict
+            properties:
+                id:
+                    title: Id
+                    type: integer
+                body:
+                    title: body
+                    type: object
+                dict:
+                    title: dict
+                    type: boolean
+        patch-basic-v1-required-body-request-body:
+            type: object
+            required:
+                - id
+            additionalProperties: false
+            properties:
+                id:
+                    type: integer
+                body:
+                    type: object
+                dict:
+                    type: boolean
+        put-basic-v1-required-body-request-body:
+            required:
+                - id
+                - email
+                - active
+                - favorites
+                - notification_config
+            title: UserRequest
+            type: object
+            additionalProperties: false
+            properties:
+                id:
+                    title: Id
+                    type: integer
+                email:
+                    title: Email
+                    type: string
+                active:
+                    title: Active
+                    type: boolean
+                favorites:
+                    items:
+                        type: string
+                    title: Favorites
+                    type: array
+                notification_config:
+                    additionalProperties:
+                        type: boolean
+                    title: Notification Config
+                    type: object

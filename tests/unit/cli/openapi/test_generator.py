@@ -16,10 +16,10 @@ class OpenAPIGeneratorTest(unittest.TestCase):
             'tags': [{'name': 'chilo-unit_test'}],
             'servers': [],
             'paths': {
-                '/some/route/{id}': {
+                '/chilo/unit_test/some/route/{id}': {
                     'delete': {
                         'tags': ['chilo-unit_test'],
-                        'operationId': 'DeleteSomeRouteIdChiloGenerated',
+                        'operationId': 'DeleteChiloUnitTestSomeRouteIdChiloGenerated',
                         'deprecated': False,
                         'parameters': [
                             {
@@ -68,8 +68,8 @@ class OpenAPIGeneratorTest(unittest.TestCase):
         importer = HandlerImporter()
         generator = OpenAPIGenerator('tests/non-existing')
         module = importer.get_modules_from_file_paths(
-            ['tests/mocks/handlers/valid/basic.py'],
-            'tests/mocks/handlers/valid',
+            ['tests/mocks/handlers/unit_tests/valid/basic.py'],
+            'tests/mocks/handlers/unit_tests/valid',
             'chilo/unit_test'
         )[0]
         generator.add_path_and_method(module)

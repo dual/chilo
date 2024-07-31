@@ -34,7 +34,7 @@ class ResolverScanner:
         return file_path, import_path
 
     def __get_request_path_as_list(self, request_path):
-        base_path = request_path.replace(self.base_path, '').replace('-', '_')
+        base_path = request_path.replace(self.base_path, '')
         clean_base = self.importer.clean_path(base_path)
         return clean_base.split('/')
 
@@ -55,16 +55,21 @@ class ResolverScanner:
     def __get_import_path_file_tree(self, split_path, split_index, file_tree, file_pattern):
         if split_index < len(split_path):
             route_part = split_path[split_index].replace('-', '_')
-            possible_directory = f'{route_part}'
-            possible_file = file_pattern.replace('*', route_part) if '*' in file_pattern else f'{possible_directory}.py'
+            possible_directory, possible_file = self.__get_possible_directory_and_file(route_part, file_pattern)
             if possible_directory in file_tree:
                 self.__handle_directory_path_part(possible_directory, split_path, split_index, file_tree, file_pattern)
             elif possible_file in file_tree:
                 self.__handle_file_path_part(possible_file, split_path, split_index, file_tree, file_pattern)
-            elif file_tree.get('__dynamic_files') and file_tree['__dynamic_files']:
+            elif file_tree.get('__dynamic_files'):
                 self.__handle_dynamic_path_part(split_path, split_index, file_tree, file_pattern)
             else:
                 raise ApiException(code=404, message='route not found')
+
+    def __get_possible_directory_and_file(self, route_part, file_pattern):
+        possible_directory = f'{route_part}'
+        possible_file = file_pattern.replace('*', route_part) if '*' in file_pattern else f'{possible_directory}.py'
+        possible_file = '__init__.py' if possible_file == '.py' else possible_file
+        return possible_directory, possible_file
 
     def __handle_directory_path_part(self, possible_directory, split_path, split_index, file_tree, file_pattern):
         self.__append_import_path(possible_directory)

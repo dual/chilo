@@ -7,7 +7,7 @@ from chilo_api.cli.openapi.handler.module import HandlerModule
 class HandlerModuleTest(unittest.TestCase):
 
     def __setup_module(self, **kwargs):
-        file_path = kwargs.get('file_path', 'tests/mocks/handlers/valid/basic.py')
+        file_path = kwargs.get('file_path', 'tests/mocks/handlers/unit_tests/valid/basic.py')
         import_path = kwargs.get('import_path', 'tests.mocks.handlers.basic')
         method = kwargs.get('method', 'post')
         spec = importlib.util.spec_from_file_location(import_path, file_path)
@@ -19,7 +19,7 @@ class HandlerModuleTest(unittest.TestCase):
         self.module = self.__setup_module()
 
     def test_file_path(self):
-        self.assertEqual(self.module.file_path, 'tests/mocks/handlers/valid/basic.py')
+        self.assertEqual(self.module.file_path, 'tests/mocks/handlers/unit_tests/valid/basic.py')
 
     def test_module(self):
         self.assertEqual(len(dir(self.module.module)), 15)
@@ -28,10 +28,10 @@ class HandlerModuleTest(unittest.TestCase):
         self.assertEqual(self.module.method, 'post')
 
     def test_operation_id(self):
-        self.assertEqual(self.module.operation_id, 'PostChiloExampleHandlersValidBasicChiloGenerated')
+        self.assertEqual(self.module.operation_id, 'PostChiloExampleHandlersUnitTestsValidBasicChiloGenerated')
 
     def test_route_path(self):
-        self.assertEqual(self.module.route_path, '/chilo/example/handlers/valid/basic')
+        self.assertEqual(self.module.route_path, '/chilo/example/handlers/unit-tests/valid/basic')
 
     def test_deprecated(self):
         self.assertEqual(self.module.deprecated, False)
@@ -61,10 +61,10 @@ class HandlerModuleTest(unittest.TestCase):
         self.assertListEqual([], self.module.required_path_params)
 
     def test_required_path_params(self):
-        self.assertEqual(self.module.request_body_schema_name, 'post-chilo-example-handlers-valid-basic-request-body')
+        self.assertEqual(self.module.request_body_schema_name, 'post-chilo-example-handlers-unit-tests-valid-basic-request-body')
 
     def test_response_body_schema_name(self):
-        self.assertEqual(self.module.response_body_schema_name, 'post-chilo-example-handlers-valid-basic-response-body')
+        self.assertEqual(self.module.response_body_schema_name, 'post-chilo-example-handlers-unit-tests-valid-basic-response-body')
 
     def test_request_body_schema(self):
         expected = {
@@ -105,7 +105,7 @@ class HandlerModuleTest(unittest.TestCase):
     def test_dynamic_route_path(self):
         module = self.__setup_module(
             method='get',
-            file_path='tests/mocks/handlers/valid/user/_user_id/item/_item_id.py',
+            file_path='tests/mocks/handlers/unit_tests/valid/user/_user_id/item/_item_id.py',
             import_path='tests.mocks.handlers.user._user_id.item._item_id'
         )
-        self.assertEqual(module.route_path, '/user/{user_id}/item/{item_id}')
+        self.assertEqual(module.route_path, '/chilo/example/user/{user_id}/item/{item_id}')

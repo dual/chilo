@@ -13,7 +13,7 @@ class RouterTest(unittest.TestCase):
     def __get_chilo_settings(self, **kwargs):
         return {
             'base_path': kwargs.get('base_path', '/'),
-            'handlers':  kwargs.get('handlers', 'tests/mocks/handlers/valid'),
+            'handlers':  kwargs.get('handlers', 'tests/mocks/handlers/unit_tests/valid'),
             'before_all': kwargs.get('before_all'),
             'after_all': kwargs.get('after_all'),
             'when_auth_required': kwargs.get('when_auth_required'),
@@ -38,19 +38,19 @@ class RouterTest(unittest.TestCase):
             return {}
 
     def test_host_default(self):
-        chilo = Chilo(base_path='/', handlers='tests/mocks/handlers/valid', LOG_LEVEL='NOTSET')
+        chilo = Chilo(base_path='/', handlers='tests/mocks/handlers/unit_tests/valid', LOG_LEVEL='NOTSET')
         self.assertEqual('127.0.0.1', chilo.host)
 
     def test_port_default(self):
-        chilo = Chilo(base_path='/', handlers='tests/mocks/handlers/valid', LOG_LEVEL='NOTSET')
+        chilo = Chilo(base_path='/', handlers='tests/mocks/handlers/unit_tests/valid', LOG_LEVEL='NOTSET')
         self.assertEqual(3000, chilo.port)
 
     def test_reload_default(self):
-        chilo = Chilo(base_path='/', handlers='tests/mocks/handlers/valid', LOG_LEVEL='NOTSET')
+        chilo = Chilo(base_path='/', handlers='tests/mocks/handlers/unit_tests/valid', LOG_LEVEL='NOTSET')
         self.assertFalse(chilo.reload)
 
     def test_verbose_default(self):
-        chilo = Chilo(base_path='/', handlers='tests/mocks/handlers/valid', LOG_LEVEL='NOTSET')
+        chilo = Chilo(base_path='/', handlers='tests/mocks/handlers/unit_tests/valid', LOG_LEVEL='NOTSET')
         self.assertFalse(chilo.verbose)
 
     def test_route_passes(self):
@@ -198,7 +198,41 @@ class RouterTest(unittest.TestCase):
         )
         self.assertDictEqual(expected, body)
 
-    def test_router_openapi_validate_requests_response_pass(self):
+    def test_router_validate_response_pass(self):
+        expected = {'page_number': 1, 'data': {'id': '2'}}
+        settings = self.__get_chilo_settings(
+            base_path='/unit-test/v1',
+            openapi='tests/mocks/openapi/variations/openapi.yml',
+        )
+        body = self.__get_chilo_response_body(
+            chilo_settings=settings,
+            headers={'x-api-key': 'some-key'},
+            path='/unit-test/v1/auto',
+            method='put'
+        )
+        self.assertDictEqual(expected, body)
+
+    def test_router_validate_response_fails(self):
+        expected = {
+            'errors': [
+                {'key_path': 'root', 'message': "'data' is a required property"},
+                {'key_path': 'root', 'message': "Additional properties are not allowed ('bad-data' was unexpected)"},
+                {'key_path': 'response', 'message': 'There was a problem with the APIs response; does not match defined schema'}
+            ]
+        }
+        settings = self.__get_chilo_settings(
+            base_path='/unit-test/v1',
+            openapi='tests/mocks/openapi/variations/openapi.yml'
+        )
+        body = self.__get_chilo_response_body(
+            chilo_settings=settings,
+            headers={'x-api-key': 'some-key'},
+            path='/unit-test/v1/auto',
+            method='get'
+        )
+        self.assertDictEqual(expected, body)
+
+    def test_router_openapi_validate_response_pass(self):
         expected = {'page_number': 1, 'data': {'id': '2'}}
         settings = self.__get_chilo_settings(
             base_path='/unit-test/v1',
@@ -214,7 +248,7 @@ class RouterTest(unittest.TestCase):
         )
         self.assertDictEqual(expected, body)
 
-    def test_router_openapi_validate_requests_response_fails(self):
+    def test_router_openapi_validate_response_fails(self):
         expected = {
             'errors': [
                 {'key_path': 'root', 'message': "'data' is a required property"},

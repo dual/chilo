@@ -2,7 +2,7 @@ import unittest
 import json
 
 from tests.mocks.common.environment_builder import EnvironmentBuilder
-from tests.mocks.handlers.valid import full_handler as full
+from tests.mocks.handlers.unit_tests.valid import full_handler as full
 
 from chilo_api.core.exception import ApiTimeOutException
 

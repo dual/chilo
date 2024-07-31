@@ -7,9 +7,9 @@ from chilo_api.core.resolver.scanner import ResolverScanner
 
 
 class ResolverScannerTest(unittest.TestCase):
-    handlers = 'tests/mocks/handlers/valid'
+    handlers = 'tests/mocks/handlers/unit_tests/valid'
     base_path = 'unit-test/v1'
-    handler_pattern = 'tests/mocks/handlers/valid/**/*_handler.py'
+    handler_pattern = 'tests/mocks/handlers/unit_tests/valid/**/*_handler.py'
 
     def test_load_importer_files_pass(self):
         scanner = ResolverScanner(handlers=self.handlers, base_path=self.base_path)

@@ -1,36 +1,35 @@
 version: 2.1
 orbs:
+    python: circleci/python@2.1.1
     sonarcloud: sonarsource/sonarcloud@2.0.0
 commands:
-    start-workflow-timer:
+    install-postman-cli:
         steps:
-            - run:
-                name: Cancel build after set time
-                background: true
-                command: |
-                    sleep 180
-                    echo "Canceling workflow because too much time has elapsed"
-                    curl -X POST --header "Content-Type: application/json" "https://circleci.com/api/v2/workflow/${CIRCLE_WORKFLOW_ID}/cancel?circle-token=${CIRCLE_TOKEN}"
+            - run: curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+    postman-test-api:
+        steps:
+            - run: postman collection run tests/integration/chilo.postman_collection.json --environment tests/integration/chilo.postman_environment.json --bail failure --verbose
     setup-artifacts:
         steps:
             - run: mkdir ./coverage && mkdir ./coverage/lint && mkdir ./coverage/reports && mkdir ./coverage/pretty || exit 0
     setup-mock-unit-test-api:
         steps:
             - run: ln -s tests/mocks/settings/unit_test_api.py api.py
-    python-install:
+    setup-mock-integration-basic-api:
         steps:
-            - run: pip install pipenv
-            - run: pipenv install
-    python-test-install:
+            - run: ln -s tests/mocks/settings/integration_basic_api.py api.py
+    setup-mock-integration-openapi-api:
         steps:
-            - restore_cache:
-                key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-            - run: pip install pipenv
-            - run: pipenv install --dev
-            - save_cache:
-                key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-                paths:
-                    - ".venv"
+            - run: ln -s tests/mocks/settings/integration_openapi_api.py api.py
+    run-api:
+        steps:
+            - run: 
+                name: Run the api
+                background: true
+                command: pipenv run api
+    sleep:
+        steps:
+            - run: sleep 3
     python-unit-test-report:
         steps:
             - run: pipenv run coverage
@@ -50,23 +49,57 @@ commands:
             - run: python3 -m pip install --user --upgrade twine
             - run: python3 -m twine upload dist/*
 jobs:
-    install-build-test:
+    install-build:
         docker:
             - image: cimg/python:3.9
         steps:
-            - start-workflow-timer
             - checkout
-            - python-test-install
+            - python/install-packages:
+                pkg-manager: pipenv
+                args: '--dev'
+            - persist_to_workspace:
+                root: ~/project
+                paths:
+                    - ./*
+    unit-test:
+        docker:
+            - image: cimg/python:3.9
+        steps:
+            - attach_workspace:
+                at: ~/project
             - setup-artifacts
             - setup-mock-unit-test-api
             - python-unit-test-report
             - sonarcloud/scan
+    integration-test-declarative:
+        docker:
+            - image: cimg/python:3.9
+        steps:
+            - attach_workspace:
+                at: ~/project
+            - install-postman-cli
+            - setup-mock-integration-basic-api
+            - run-api
+            - sleep
+            - postman-test-api
+    integration-test-openapi:
+        docker:
+            - image: cimg/python:3.9
+        steps:
+            - attach_workspace:
+                at: ~/project
+            - install-postman-cli
+            - setup-mock-integration-openapi-api
+            - run-api
+            - sleep
+            - postman-test-api
     install-build-deploy:
         docker:
             - image: cimg/python:3.9
         steps:
             - checkout
-            - python-install
+            - python/install-packages:
+                pkg-manager: pipenv
             - pypi-setup
             - pypi-deploy
 workflows:
@@ -80,10 +113,15 @@ workflows:
                         ignore: /.*/
     install-build-test-workflow:
         jobs:
-            - install-build-test:
+            - install-build
+            - unit-test:
                 context:
                     - sonarcloud
-                    - circleci
-                filters:
-                    tags:
-                        ignore: /.*/
+                requires:
+                    - install-build
+            - integration-test-declarative:
+                requires:
+                    - install-build
+            - integration-test-openapi:
+                requires:
+                    - install-build

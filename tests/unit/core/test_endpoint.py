@@ -8,7 +8,7 @@ from chilo_api.core.resolver.importer import ResolverImporter
 
 
 class EndpointTest(unittest.TestCase):
-    handler_path = 'tests/mocks/handlers/valid'
+    handler_path = 'tests/mocks/handlers/unit_tests/valid'
     file_path = f'{handler_path}/basic.py'
     import_path = 'tests.mocks.handlers.basic'
     environ = EnvironmentBuilder()

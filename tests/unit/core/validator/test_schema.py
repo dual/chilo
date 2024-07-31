@@ -172,11 +172,6 @@ class SchemaTest(unittest.TestCase):
         spec = schema.get_body_spec('v1-test-request')
         self.assertDictEqual(self.expected_combined_dict, spec)
 
-    def test_get_body_spec_from_dict(self):
-        schema = Schema(openapi=self.schema_dict)
-        spec = schema.get_body_spec()
-        self.assertDictEqual(self.expected_dict_from_dict, spec)
-
     def test_get_body_spec_from_pydantic_model(self):
         schema = Schema(openapi=self.schema_path)
         spec = schema.get_body_spec(Request)

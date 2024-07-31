@@ -34,7 +34,7 @@ class ValidatorTest(unittest.TestCase):
     }
 
     def setUp(self):
-        self.validator = Validator(openapi=self.schema_path, handlers='tests/mocks/handlers/valid')
+        self.validator = Validator(openapi=self.schema_path, handlers='tests/mocks/handlers/unit_tests/valid')
 
     def test_empty_validation(self):
         request = self.environ.get_request()

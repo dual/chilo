@@ -78,7 +78,7 @@ class Request:
 
     @property
     def headers(self):
-        return dict(self.__wsgi.headers)
+        return {key.lower(): value for key, value in dict(self.__wsgi.headers).items()}
 
     @property
     def body(self):

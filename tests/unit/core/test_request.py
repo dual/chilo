@@ -60,7 +60,7 @@ class RequestTest(unittest.TestCase):
         self.assertEqual('/basic/{id}', request.route)
 
     def test_headers(self):
-        headers = {'Host': 'localhost', 'X-Unit-Key': 'test'}
+        headers = {'host': 'localhost', 'x-unit-key': 'test'}
         request = self.environ.get_request(headers=headers)
         self.assertDictEqual(headers, request.headers)
 
@@ -153,6 +153,6 @@ class RequestTest(unittest.TestCase):
         self.assertDictEqual({}, request.path_params)
 
     def test_to_str(self):
-        expected = {'method': 'get', 'headers': {'Host': 'localhost'}, 'query': {}, 'path': {},  'body': b'', 'context': {}}
+        expected = {'method': 'get', 'headers': {'host': 'localhost'}, 'query': {}, 'path': {},  'body': b'', 'context': {}}
         request = self.environ.get_request()
         self.assertEqual(str(expected), str(request))

@@ -22,7 +22,7 @@ class InputArgumentsTest(unittest.TestCase):
         api = importer.get_api_module()
         input_args = InputArguments(api, manager.args)
         self.assertEqual('/', input_args.base)
-        self.assertEqual('tests/mocks/handlers/valid', input_args.handlers)
+        self.assertEqual('tests/mocks/handlers/unit_tests/valid', input_args.handlers)
         self.assertEqual('tests/outputs/arguments', input_args.output)
         self.assertListEqual(['json', 'yml'], input_args.formats)
         self.assertTrue(input_args.delete)

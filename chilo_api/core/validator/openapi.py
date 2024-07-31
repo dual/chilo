@@ -34,27 +34,33 @@ class OpenApiValidator:
             raise RuntimeError('there was a problem with your openapi schema; see above') from openapi_error
 
     def __get_module_dict(self):
-        modules = {}
         route_list = self.__importer.get_file_list()
         sep = self.__importer.file_separator
+        modules = self.__get_modules_from_routes(sep, route_list)
+        return modules
+
+    def __get_modules_from_routes(self, sep, route_list):
+        modules = {}
         for route_item in route_list:
             file_path = self.__handlers.split(f'{sep}*')[0] + route_item
             import_path = file_path.replace(sep, '.').replace('.py', '')
             file_route = self.__clean_up_route(route_item)
             module = self.__importer.import_module_from_file(file_path, import_path)
-            route = self.__determine_route(file_route, module)
-            base = self.__base_path.strip('/')
-            path = f'{base}{route}'.strip('/')
-            methods = [method for method in dir(module) if method in self.SUPPORTED_METHODS]
-            request_schemas = self.__get_required_body_schemas(module)
-            response_schemas = self.__get_required_response_schemas(module)
-            if len(methods):
-                modules[f'/{path}'] = {
-                    'methods': methods,
-                    'request_schemas': request_schemas,
-                    'response_schemas': response_schemas
-                }
+            self.__add_routes_and_methods_to_modules(file_route, modules,  module)
         return modules
+
+    def __add_routes_and_methods_to_modules(self, file_route, modules,  module):
+        for method in dir(module):
+            if method in self.SUPPORTED_METHODS:
+                route = self.__determine_route(file_route, getattr(module, method))
+                base = self.__base_path.strip('/')
+                path = f'{base}{route}'.strip('/')
+                route_path = f'/{path}'
+                if not modules.get(route_path):
+                    modules[route_path] = {'methods': []}
+                modules[route_path]['methods'].append(method)
+                modules[route_path]['request_schemas'] = self.__get_required_body_schemas(module)
+                modules[route_path]['response_schemas'] = self.__get_required_response_schemas(module)
 
     def __clean_up_route(self, route_item):
         route_no_extension = route_item.replace('.py', '').replace('__init__', '')
@@ -75,14 +81,11 @@ class OpenApiValidator:
             replaced.append(route_variable)
         return '/'.join(replaced)
 
-    def __determine_route(self, file_route, module):
-        for method in dir(module):
-            if method in self.SUPPORTED_METHODS:
-                module_method = getattr(module, method)
-                requirements = getattr(module_method, 'requirements', {})
-                if requirements.get('required_route'):
-                    required_route = requirements['required_route'].strip('/')
-                    return f'/{required_route}'
+    def __determine_route(self, file_route, module_method):
+        requirements = getattr(module_method, 'requirements', {})
+        if requirements.get('required_route'):
+            required_route = requirements['required_route'].strip('/')
+            return f'/{required_route}'
         return f'/{file_route}'
 
     def __get_required_body_schemas(self, module):
@@ -112,16 +115,15 @@ class OpenApiValidator:
             for method in module_dict[route]['methods']:
                 if not self.__schema.paths[route].get(method):
                     raise RuntimeError(f'openapi_validate_request is enabled and method {method} in route {route} does not exist in openapi')
-    
+
     def __verify_required_body_exist_in_openapi(self, module_dict):
         for route, values in module_dict.items():
             for schema in values.get('request_schemas', []):
                 if not self.__schema.spec['components']['schemas'].get(schema):
                     raise RuntimeError(f'required_body schema {schema} from {route} not found in openapi')
-    
+
     def __verify_required_response_exist_in_openapi(self, module_dict):
         for route, values in module_dict.items():
             for schema in values.get('response_schemas', []):
                 if not self.__schema.spec['components']['schemas'].get(schema):
                     raise RuntimeError(f'required_response schema {schema} from {route} not found in openapi')
-

@@ -1,0 +1,917 @@
+{
+	"info": {
+		"_postman_id": "62c7ab96-65db-4a1b-9173-ef02768c441e",
+		"name": "Chilo Integration Tests: Declarative Requirements",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1888415"
+	},
+	"item": [
+		{
+			"name": "empty-slash",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"body has hello:true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.hello).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/basic/v1/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth-required-passes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"body has auth_passed:true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.auth_passed).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "some-key",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/basic/v1/auth-required",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"auth-required"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth-required-fails",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/basic/v1/auth-required",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"auth-required"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "before-after",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"body has before_after:true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.before_after).to.eql(true);",
+							"});",
+							"",
+							"pm.test(\"body has call_order in right order\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.call_order[0]).to.eql('before_post');",
+							"    pm.expect(jsonData.call_order[1]).to.eql('after_post');",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/basic/v1/before-after",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"before-after"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "custom-params-passes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"body has before_after:true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.custom_params).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-user-role",
+						"value": "admin",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/basic/v1/custom-params",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"custom-params"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "custom-params-fails",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/basic/v1/custom-params",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"custom-params"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "no-requirements",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"body has no_requirements:true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.no_requirements).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/basic/v1/no-requirements",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"no-requirements"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "request-class",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"body has no_requirements:true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.request_class).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/basic/v1/request-class",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"request-class"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "required-body-passes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"body has no_requirements:true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.post_required_body_string).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1,\n    \"body\": {\n        \"key\": \"value\"\n    },\n    \"dict\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/basic/v1/required-body",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"required-body"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "required-body-fails",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"1\",\n    \"body\": {\n        \"key\": \"value\"\n    },\n    \"dict\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/basic/v1/required-body",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"required-body"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "required-body-passes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"body has no_requirements:true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.patch_required_body_dict).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1,\n    \"dict\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/basic/v1/required-body",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"required-body"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "required-body-fails",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1,\n    \"dict\": {\"key\": \"value\"}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/basic/v1/required-body",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"required-body"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "required-body-passes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"body has no_requirements:true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.put_required_body_pydantic).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1,\n    \"email\":\"some@email.com\",\n    \"active\": true,\n    \"favorites\": [\"emails\"],\n    \"notification_config\": {\"emails\": true}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/basic/v1/required-body",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"required-body"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "required-body-fails",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1,\n    \"email\":\"some@email.com\",\n    \"favorites\": [\"emails\"],\n    \"notification_config\": {\"emails\": true}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/basic/v1/required-body",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"required-body"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "various-requirements-passes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"body has no_requirements:true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.various_required_requirements).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "some-key",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/basic/v1/various-requirements?user_type=admin",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"various-requirements"
+					],
+					"query": [
+						{
+							"key": "user_type",
+							"value": "admin"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "various-requirements-fails",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/basic/v1/various-requirements",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"various-requirements"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "various-requirements-fails",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/basic/v1/various-requirements?no-param=1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"various-requirements"
+					],
+					"query": [
+						{
+							"key": "no-param",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "various-requirements-passes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"body has no_requirements:true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.various_available_requirements).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/basic/v1/various-requirements?first=chilo",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"various-requirements"
+					],
+					"query": [
+						{
+							"key": "first",
+							"value": "chilo"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "dynamic-init",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"body has hello:true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.dynamic).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/basic/v1/dynamic",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"dynamic"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "dynamic-id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"body has hello:true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.dynamic_id).to.eql(\"abc-123\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/basic/v1/dynamic/abc-123",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"dynamic",
+						"abc-123"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "dynamic-id-extended-variables",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"body has keys to have values\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.dynamic_id).to.eql(\"abc-123\");",
+							"    pm.expect(jsonData.some_var).to.eql(\"some_var\");",
+							"    pm.expect(jsonData.last_var).to.eql(\"5\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/basic/v1/dynamic/abc-123/some_var/5",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"basic",
+						"v1",
+						"dynamic",
+						"abc-123",
+						"some_var",
+						"5"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -32,8 +32,6 @@ class Schema:
     def get_body_spec(self, required_body=None):
         if required_body and inspect.isclass(required_body) and issubclass(required_body, BaseModel):
             return required_body
-        elif self.__openapi and isinstance(self.__openapi, dict):
-            body_spec = self.__openapi
         elif required_body and isinstance(required_body, dict):
             body_spec = required_body
         elif required_body and isinstance(required_body, str):

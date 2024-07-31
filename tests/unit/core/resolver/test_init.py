@@ -9,8 +9,8 @@ from chilo_api.core.resolver import Resolver
 
 class ResolverTest(unittest.TestCase):
     base_path = 'unit-test/v1'
-    handler_path = 'tests/mocks/handlers/valid'
-    bad_handler_path = 'tests/mocks/handlers/invalid/bad_endpoint'
+    handler_path = 'tests/mocks/handlers/unit_tests/valid'
+    bad_handler_path = 'tests/mocks/handlers/unit_tests/invalid/bad_endpoint'
     environ = EnvironmentBuilder()
 
     def test_finding_endpoint_passes(self):
