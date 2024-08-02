@@ -51,7 +51,7 @@ class ResponseTest(unittest.TestCase):
         expected = {'errors': [{'key_path': 'some-error-key', 'message': 'some-error-value'}]}
         self.response.set_error('some-error-key', 'some-error-value')
         body = next(self.response.server).decode('utf-8')
-        self.assertEqual(body, json.dumps(expected))
+        self.assertDictEqual(json.loads(body), expected)
 
     def test_has_error(self):
         self.response.set_error('some-error-key', 'some-error-value')

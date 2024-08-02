@@ -1,4 +1,4 @@
-import simplejson as json
+import msgspec
 
 
 class JsonHelper:
@@ -6,7 +6,7 @@ class JsonHelper:
     @staticmethod
     def decode(data, raise_error=False):
         try:
-            return json.loads(data, use_decimal=True)
+            return msgspec.json.decode(data)
         except Exception as error:
             if raise_error:
                 raise error
@@ -15,7 +15,10 @@ class JsonHelper:
     @staticmethod
     def encode(data, raise_error=False):
         try:
-            return json.dumps(data, use_decimal=True)
+            encoded = msgspec.json.encode(data)
+            if isinstance(encoded, (bytes, bytearray)):
+                return encoded.decode("utf-8")
+            return encoded
         except Exception as error:
             if raise_error:
                 raise error

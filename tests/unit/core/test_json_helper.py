@@ -22,13 +22,12 @@ class JsonHelperTest(unittest.TestCase):
         try:
             JsonHelper.decode(json_string, raise_error=True)
         except Exception as error:
-            self.assertTrue('Expecting value: line' in str(error))
+            self.assertIn('JSON is malformed', str(error))
 
     def test_encode_pass(self):
         json_obj = {'unit': 'test'}
-        json_string = json.dumps(json_obj)
         result = JsonHelper.encode(json_obj)
-        self.assertEqual(json_string, result)
+        self.assertEqual('{"unit":"test"}', result)
 
     def test_encode_fails_no_error(self):
         json_string = 'some-string'

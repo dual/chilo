@@ -20,10 +20,10 @@ setup(
         'icecream',
         'jsonref',
         'jsonschema',
+        'msgspec',
         'openapi-spec-validator',
         'pydantic',
         'pyyaml',
-        'simplejson',
         'Werkzeug',
         'xmltodict'
     ],

@@ -60,8 +60,8 @@ class ValidatorTest(unittest.TestCase):
         }
         self.validator.validate_request(request, response, requirements)
         self.assertTrue(response.has_errors)
-        body = next(response.server).decode('utf-8')
-        self.assertEqual(json.dumps({"errors": [{"key_path": "headers", "message": "Please provide content-type in headers"}]}), body)
+        body = json.loads(next(response.server).decode('utf-8'))
+        self.assertDictEqual({"errors": [{"key_path": "headers", "message": "Please provide content-type in headers"}]}, body)
 
     def test_available_headers_pass(self):
         request = self.environ.get_request()
@@ -80,8 +80,8 @@ class ValidatorTest(unittest.TestCase):
         }
         self.validator.validate_request(request, response, requirements)
         self.assertTrue(response.has_errors)
-        body = next(response.server).decode('utf-8')
-        self.assertEqual(json.dumps({"errors": [{"key_path": "headers", "message": "content-type-fail is not an available headers"}]}), body)
+        body = json.loads(next(response.server).decode('utf-8'))
+        self.assertDictEqual({"errors": [{"key_path": "headers", "message": "content-type-fail is not an available headers"}]}, body)
 
     def test_combined_headers_pass(self):
         request = self.environ.get_request(headers={'content-type': 'unit/test'})
@@ -109,9 +109,9 @@ class ValidatorTest(unittest.TestCase):
             'required_query': ['email']
         }
         self.validator.validate_request(request, response, requirements)
-        body = next(response.server).decode('utf-8')
+        body = json.loads(next(response.server).decode('utf-8'))
         self.assertTrue(response.has_errors)
-        self.assertEqual(json.dumps({"errors": [{"key_path": "query_params", "message": "Please provide email in query_params"}]}), body)
+        self.assertDictEqual({"errors": [{"key_path": "query_params", "message": "Please provide email in query_params"}]}, body)
 
     def test_available_query_pass(self):
         request = self.environ.get_request()
@@ -139,9 +139,9 @@ class ValidatorTest(unittest.TestCase):
             'available_query': ['email']
         }
         self.validator.validate_request(request, response, requirements)
-        body = next(response.server).decode('utf-8')
+        body = json.loads(next(response.server).decode('utf-8'))
         self.assertTrue(response.has_errors)
-        self.assertEqual(json.dumps({"errors": [{"key_path": "query_params", "message": "email-fail is not an available query_params"}]}), body)
+        self.assertDictEqual({"errors": [{"key_path": "query_params", "message": "email-fail is not an available query_params"}]}, body)
 
     def test_required_body_pass(self):
         request = self.environ.get_request(json=self.passing_body)
@@ -159,9 +159,9 @@ class ValidatorTest(unittest.TestCase):
             'required_body': 'v1-required-body-test'
         }
         self.validator.validate_request(request, response, requirements)
-        body = next(response.server).decode('utf-8')
+        body = json.loads(next(response.server).decode('utf-8'))
         self.assertTrue(response.has_errors)
-        self.assertEqual(json.dumps({"errors": [{"key_path": "id", "message": "'three' is not of type 'integer'"}]}), body)
+        self.assertDictEqual({"errors": [{"key_path": "id", "message": "'three' is not of type 'integer'"}]}, body)
 
     def test_required_body_fails_non_json(self):
         request = self.environ.get_request(data='some-thing')
@@ -170,10 +170,10 @@ class ValidatorTest(unittest.TestCase):
             'required_body': 'v1-required-body-test'
         }
         self.validator.validate_request(request, response, requirements)
-        body = next(response.server).decode('utf-8')
+        body = json.loads(next(response.server).decode('utf-8'))
         self.assertTrue(response.has_errors)
         self.assertEqual(
-            json.dumps({"errors": [{"key_path": "body", "message": "Expecting JSON; make ensure proper content-type headers and encoded body"}]}),
+            {"errors": [{"key_path": "body", "message": "Expecting JSON; make ensure proper content-type headers and encoded body"}]},
             body
         )
 
@@ -193,10 +193,10 @@ class ValidatorTest(unittest.TestCase):
             'required_body': UserRequest
         }
         self.validator.validate_request(request, response, requirements)
-        body = next(response.server).decode('utf-8')
+        body = json.loads(next(response.server).decode('utf-8'))
         self.assertTrue(response.has_errors)
-        self.assertEqual(json.dumps(
-            {"errors": [{"key_path": "id", "message": "Input should be a valid integer, unable to parse string as an integer"}]}),
+        self.assertEqual(
+            {"errors": [{"key_path": "id", "message": "Input should be a valid integer, unable to parse string as an integer"}]},
             body
         )
 
@@ -222,9 +222,9 @@ class ValidatorTest(unittest.TestCase):
         request = self.environ.get_request(json=self.passing_body, path='/unit-test/v1/auto')
         response = self.environ.get_response()
         self.validator.validate_request_with_openapi(request, response)
-        body = next(response.server).decode('utf-8')
+        body = json.loads(next(response.server).decode('utf-8'))
         self.assertTrue(response.has_errors)
-        self.assertEqual(json.dumps({"errors": [{"key_path": "headers", "message": "Please provide x-api-key in headers"}]}), body)
+        self.assertDictEqual({"errors": [{"key_path": "headers", "message": "Please provide x-api-key in headers"}]}, body)
 
     def test_route_has_security(self):
         request = self.environ.get_request(path='/unit-test/v1/auto', method='get')

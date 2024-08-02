@@ -58,7 +58,7 @@ class EndpointTest(unittest.TestCase):
         request = self.environ.get_request()
         result = endpoint.run(request, response)
         body = next(result.server).decode('utf-8')
-        self.assertEqual(body, '{"router_directory_basic": ""}')
+        self.assertDictEqual({'router_directory_basic': ''}, json.loads(body))
 
     def test_endpoint_runs_without_requirements(self):
         endpoint = self.__get_endpoint_instance('patch')
@@ -66,7 +66,7 @@ class EndpointTest(unittest.TestCase):
         request = self.environ.get_request()
         result = endpoint.run(request, response)
         body = next(result.server).decode('utf-8')
-        self.assertEqual(body, '{"router_directory_basic": "PATCH"}')
+        self.assertEqual({'router_directory_basic': 'PATCH'}, json.loads(body))
 
     def test_run_options(self):
         endpoint = self.__get_endpoint_instance('options')
