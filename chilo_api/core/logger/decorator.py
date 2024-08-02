@@ -2,6 +2,14 @@ from chilo_api import logger
 
 
 def log(**settings):
+    '''
+    A decorator to make logging simplier and DRY'er; will capture all args, kwargs and ouput of decorated function/method
+
+    level: str, enum(DEBUG, INFO, WARN, ERROR)
+        The log level to log (default is INFO)
+    condition: callable, optional
+        A callable function which will determine if log should happen; callable must return truth-y/false-y value
+    '''
     def decorator_func(func):
         captured = {'arguments': {}, 'result': None}
 

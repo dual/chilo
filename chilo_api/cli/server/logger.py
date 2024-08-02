@@ -15,5 +15,8 @@ class ServerLogger:  # pragma: no cover
         print(f'| PORT: {server.port} (from {server.source["port"]})')
         print(f'| RELOAD: {server.reload} (from {server.source["reload"]})')
         print(f'| VERBOSE: {server.verbose} (from {server.source["verbose"]})')
+        print(f'| TIMEOUT: {server.timeout}')
+        print(f'| OPENAPI REQUEST VALIDATION: {server.openapi_validate_request}')
+        print(f'| OPENAPI RESPONSE VALIDATION: {server.openapi_validate_response}')
         print('|----------------------------------------------------|')
         print('\n')

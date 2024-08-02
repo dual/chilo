@@ -7,18 +7,18 @@ from icecream import ic
 class CommonLogger:
 
     def __init__(self, **kwargs):
-        self.__log_level = kwargs.get('LOG_LEVEL', 'INFO')
+        self.__log_level = kwargs.get('level', 'INFO')
         self.log_levels = {'DEBUG': 1, 'INFO': 2, 'WARN': 3, 'ERROR': 4, 'CRITICAL': 5, 'NOTSET': 99}
         self.__validate_configs()
 
     def log(self, *args, **kwargs):
-        default = {'level': kwargs.get('level', 'INFO'), 'log': kwargs.get('log', args)}
-        if self.__should_log(default['level']):
-            self.__log(**default)
+        log = {'level': kwargs.get('level', 'INFO'), 'log': kwargs.get('log', args)}
+        if self.__should_log(log['level']):
+            self.__log(**log)
 
     def __validate_configs(self):
         if self.__log_level not in self.log_levels.keys():
-            raise RuntimeError(f'LOG_LEVEL argument must be {",".join(self.log_levels.keys())}; recieved: {self.__log_level}')
+            raise RuntimeError(f'level argument must be {",".join(self.log_levels.keys())}; recieved: {self.__log_level}')
 
     def __should_log(self, level):
         current_log_level = self.log_levels[level]

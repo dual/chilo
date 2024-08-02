@@ -240,6 +240,17 @@ paths:
                     description: OK
                     content:
                         application/json: {}
+        delete:
+            tags:
+                - chilo
+            operationId: DeleteBasicChiloGenerated
+            deprecated: false
+            parameters: []
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json: {}
     /unhandled_exception:
         post:
             tags:

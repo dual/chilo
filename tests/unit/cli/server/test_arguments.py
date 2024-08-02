@@ -17,6 +17,9 @@ class MockApi:
     port = 3000
     reload = False
     verbose = False
+    timeout = None
+    openapi_validate_request = False
+    openapi_validate_response = False
 
     def route(self, *args, **kwargs):
         pass

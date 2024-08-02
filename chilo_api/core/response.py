@@ -6,6 +6,35 @@ from chilo_api.core.json_helper import JsonHelper
 
 
 class Response:
+    '''
+    A class to represent a api response
+
+    Attributes
+    ----------
+    headers: dict
+        The headers of the response (case sensitive)
+    mimetype: str
+        The mimetype (content type without charset etc.)
+    cors: str, boolean
+        determines if cors is enabled; can set `True` to open cors, or set a comma delimented string for only certain domains
+    compress: boolean
+        determines if response will be compressed (defaults is `False`)
+    code: int (1xx - 5xx)
+        status code to be returned to requester
+    has_errors: bool
+        determines if body contains error object
+    body: str
+        the return body of the response in json string
+    raw: dict, list tuple
+        the return body of the request in its original format
+    server: any
+        special return format for use by the server worker
+    
+    Methods
+    ----------
+    set_error(key_path, message):
+        composes error using consistent format
+    '''
 
     def __init__(self, **kwargs):
         self.__code = 200

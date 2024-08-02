@@ -53,6 +53,18 @@ class RouterTest(unittest.TestCase):
         chilo = Chilo(base_path='/', handlers='tests/mocks/handlers/unit_tests/valid', LOG_LEVEL='NOTSET')
         self.assertFalse(chilo.verbose)
 
+    def test_timeout_default(self):
+        chilo = Chilo(base_path='/', handlers='tests/mocks/handlers/unit_tests/valid', LOG_LEVEL='NOTSET')
+        self.assertIsNone(chilo.timeout)
+
+    def test_openapi_validate_request_default(self):
+        chilo = Chilo(base_path='/', handlers='tests/mocks/handlers/unit_tests/valid', LOG_LEVEL='NOTSET')
+        self.assertFalse(chilo.openapi_validate_request)
+
+    def test_openapi_validate_response_default(self):
+        chilo = Chilo(base_path='/', handlers='tests/mocks/handlers/unit_tests/valid', LOG_LEVEL='NOTSET')
+        self.assertFalse(chilo.openapi_validate_response)
+
     def test_route_passes(self):
         body = self.__get_chilo_response_body(path='/basic', method='patch')
         self.assertDictEqual({'router_directory_basic': 'PATCH'}, body)

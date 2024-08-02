@@ -60,9 +60,15 @@ class OpenAPIGeneratorTest(unittest.TestCase):
         self.assertEqual(json.dumps(generator.doc), json.dumps(self.existing_expected_json))
 
     def test_removed_path_and_method_existing_yml_file(self):
+        importer = HandlerImporter()
         generator = OpenAPIGenerator('tests/mocks/openapi/discoverable/removed')
+        module = importer.get_modules_from_file_paths(
+            ['tests/mocks/handlers/unit_tests/valid/basic.py'],
+            'tests/mocks/handlers/unit_tests/valid',
+            'chilo/unit_test'
+        )[0]
+        generator.add_path_and_method(module)
         generator.doc
-        self.assertTrue(True)
 
     def test_add_path_and_method_non_existing_file(self):
         importer = HandlerImporter()

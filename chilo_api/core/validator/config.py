@@ -6,8 +6,8 @@ class ConfigValidator:
             raise RuntimeError('base_path string is required')
         if not kwargs.get('handlers') or not isinstance(kwargs.get('handlers'), str):
             raise RuntimeError('handlers is required; must be glob pattern string {route: file_path}')
-        if kwargs.get('openapi') and not isinstance(kwargs.get('openapi'), (str, dict)):
-            raise RuntimeError('schema should either be file path string or json-schema style dictionary')
+        if kwargs.get('openapi') and not isinstance(kwargs.get('openapi'), str):
+            raise RuntimeError('schema should either be file path string')
         if kwargs.get('openapi_validate_request') and not isinstance(kwargs.get('openapi_validate_request'), bool):
             raise RuntimeError('openapi_validate_request should be a boolean')
         if kwargs.get('openapi_validate_request') and kwargs.get('openapi') is None:

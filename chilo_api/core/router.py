@@ -1,4 +1,5 @@
 import datetime
+from typing_extensions import Unpack
 
 from werkzeug.wrappers import Request as WSGIRequest, Response as WSGIResponse
 
@@ -9,12 +10,82 @@ from chilo_api.core.json_helper import JsonHelper
 from chilo_api.core.request import Request
 from chilo_api.core.resolver import Resolver
 from chilo_api.core.response import Response
+from chilo_api.core.types.router_settings import RouterSettings
 from chilo_api.core.validator import Validator
 
 
 class Router:
+    '''
+    A class to route request to appropriate file/endpoint and run the appropriate middleware
+    
+    Attributes
+    ----------
+    handlers: str
+        glob pattern location of the handler files eligible for being a handler
+    base_path: str
+        base path of the url to route from (ex. http://locahost/{base_path}/your-endpoint)
+    host: str
+        host url to run the api on (defaults to 127.0.0.1)
+    port: int
+        default to port to run (defaults to 3000)
+    reload: bool
+        determines if system will watch files and automatically reload
+    verbose: bool
+        determines if verbose logging is enabled
+    timeout: int
+        global value to timeout all handlers after certain amout of time
+    openapi_validate_request: bool
+        determines if api should validate request against spece openapi spec
+    openapi_validate_response: bool
+        determines if api should validate response against spece openapi spec
+    
+    Methods
+    ----------
+    route(environ, server_response):
+        routes request to the correct endpoint and runs approprite middleware
+    '''
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Unpack[RouterSettings]):
+        '''
+        Constructs all necessary configuration for the router
+        
+        Parameters
+        ----------
+        handlers: str
+            glob pattern location of the handler files eligible for being a handler
+        base_path: str
+            base path of the url to route from (ex. http://locahost/{base_path}/your-endpoint)
+        host: str, optional
+            host url to run the api on (default is 127.0.0.1)
+        port: int, optional
+            default to port to run (default is 3000)
+        reload: bool, optional
+            determines if system will watch files and automatically reload (default is False)
+        verbose: bool, optional 
+            determines if verbose logging is enabled (default is False)
+        before_all: callable, optional
+            function to run before all requests
+        after_all: callable, optional
+            function to run after all requests; if not errors were detected
+        when_auth_required: callable, optional
+            function to run when `auth_required` is true on the endpoint requirements dectorator
+        on_error: callable, optional
+            function to run when 500 level is raised
+        on_timeout: callable, optional
+            function to run when timeout error is raised
+        cors: bool, optional
+            determines if cors is enabled (default is True)
+        timeout: int, optional
+            global value to timeout all handlers after certain amout of time (default is None)
+        cache_size: int, optional
+            size of the router cache (NOT response cache); allows for faster routing (default is 128)
+        cache_mode: str, enum(all, static-only, dynamic-only)
+            determies if router caches all routes or just static or dynamic routes (default is all)
+        openapi_validate_request: bool, optional
+            determines if api should validate request against spece openapi spec (default is False)
+        openapi_validate_response: bool, optional
+            determines if api should validate response against spece openapi spec (default is False)
+        '''
         ConfigValidator.validate(**kwargs)
         self.__handlers = kwargs['handlers']
         self.__base_path = kwargs['base_path']
@@ -61,6 +132,18 @@ class Router:
     @property
     def verbose(self):
         return self.__verbose
+
+    @property
+    def timeout(self):
+        return self.__timeout
+
+    @property
+    def openapi_validate_request(self):
+        return self.__openapi_validate_request
+
+    @property
+    def openapi_validate_response(self):
+        return self.__openapi_validate_response
 
     def route(self, environ, server_response):
         request = Request(wsgi=WSGIRequest(environ), timeout=self.__timeout)

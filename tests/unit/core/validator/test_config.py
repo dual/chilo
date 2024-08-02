@@ -10,7 +10,7 @@ class ConfigValidatorTest(unittest.TestCase):
             ConfigValidator.validate(
                 base_path='some/path',
                 handlers='some/path',
-                openapi={'json_schema': True},
+                openapi='some/path',
                 openapi_validate_request=False,
                 openapi_validate_response=False,
                 cache_size=128,
@@ -74,7 +74,7 @@ class ConfigValidatorTest(unittest.TestCase):
             self.assertTrue(False)
         except RuntimeError as runtime_error:
             self.assertTrue(isinstance(runtime_error, RuntimeError))
-            self.assertEqual('schema should either be file path string or json-schema style dictionary', str(runtime_error))
+            self.assertEqual('schema should either be file path string', str(runtime_error))
 
     def test_config_validator_validates_routing_cache_size_is_appropriate(self):
         try:

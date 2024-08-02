@@ -27,6 +27,12 @@ commands:
                 name: Run the api
                 background: true
                 command: pipenv run api
+    run-gunicorn:
+        steps:
+            - run: 
+                name: Run the api with gunicorn
+                background: true
+                command: pipenv run gunicorn
     sleep:
         steps:
             - run: sleep 3
@@ -71,6 +77,11 @@ jobs:
             - setup-mock-unit-test-api
             - python-unit-test-report
             - sonarcloud/scan
+    ensure-integration-tests-after-unit-tests:
+        docker:
+            - image: cimg/python:3.9
+        steps:
+            - sleep
     integration-test-declarative:
         docker:
             - image: cimg/python:3.9
@@ -91,6 +102,17 @@ jobs:
             - install-postman-cli
             - setup-mock-integration-openapi-api
             - run-api
+            - sleep
+            - postman-test-api
+    integration-test-gunicorn:
+        docker:
+            - image: cimg/python:3.9
+        steps:
+            - attach_workspace:
+                at: ~/project
+            - install-postman-cli
+            - setup-mock-integration-basic-api
+            - run-gunicorn
             - sleep
             - postman-test-api
     install-build-deploy:
@@ -119,9 +141,15 @@ workflows:
                     - sonarcloud
                 requires:
                     - install-build
+            - ensure-integration-tests-after-unit-tests:
+                requires:
+                    - install-build 
             - integration-test-declarative:
                 requires:
-                    - install-build
+                    - ensure-integration-tests-after-unit-tests
             - integration-test-openapi:
                 requires:
-                    - install-build
+                    - ensure-integration-tests-after-unit-tests
+            - integration-test-gunicorn:
+                requires:
+                    - ensure-integration-tests-after-unit-tests
