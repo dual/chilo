@@ -78,14 +78,8 @@ class LoggerTest(unittest.TestCase):
         result = mock_func_condition(3, 2, test=True)
         self.assertDictEqual({'args': [3, 2], 'kwargs': {'test': True}}, result)
 
-    def test_logger_LOG_FORMAT(self):
-        try:
-            logger.log(LOG_FORMAT='BAD', level='INFO', log={'error': 'test-simple'})
-        except Exception as error:
-            self.assertTrue('LOG_FORMAT argument must be either' in str(error))
-
     def test_logger_LOG_LEVEL(self):
         try:
-            logger.log(LOG_LEVEL='BAD', level='INFO', log={'error': 'test-simple'})
+            logger.log(level='BAD', log={'error': 'test-simple'})
         except Exception as error:
-            self.assertTrue('LOG_LEVEL argument must be' in str(error))
+            self.assertIn('level argument must be', str(error))

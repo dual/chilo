@@ -35,8 +35,11 @@ class JsonHelperTest(unittest.TestCase):
         self.assertEqual(f'"{json_string}"', result)
 
     def test_encode_fails_raise_error(self):
-        json_string = {'some-set'}
+        class BadJSON:
+            pass
+
+        json_string = BadJSON()
         try:
             JsonHelper.encode(json_string, raise_error=True)
         except Exception as error:
-            self.assertTrue('Object of type set is not JSON serializable' in str(error))
+            self.assertIn('Encoding objects of type BadJSON', str(error))
