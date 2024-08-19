@@ -33,8 +33,8 @@ Happy Path Programming is an idea in which inputs are all validated before opera
 ## Documentation & Examples
 
 * [Full Docs](https://chiloproject.io)
+* [Examples](https://github.com/dual/chilo-docs/tree/main/examples)
 * Tutorial (coming soon)
-* Examples (coming soon)
 
 ## Quick Start
 
