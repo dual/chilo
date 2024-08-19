@@ -11,20 +11,20 @@ class Cache(Enum):
 class RouterSettings(TypedDict):
     handlers: str
     base_path: str
-    host: str = '127.0.0.1'
-    port: int = 3000
-    reload: bool = False
-    verbose: bool = False
+    host: str
+    port: int
+    reload: bool
+    verbose: bool
     before_all: Optional[Callable]
     after_all: Optional[Callable]
     when_auth_required: Optional[Callable]
     on_error: Optional[Callable]
     on_timeout: Optional[Callable]
-    cors: bool = True
+    cors: bool
     cache_size: Optional[int]
-    cache_mode: Cache = 'all'
+    cache_mode: Cache
     timeout: Optional[int]
-    output_error: bool = False
+    output_error: bool
     openapi: Optional[str]
-    openapi_validate_request: bool = False
-    openapi_validate_response: bool = False
+    openapi_validate_request: bool
+    openapi_validate_response: bool

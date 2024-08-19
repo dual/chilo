@@ -27,6 +27,7 @@ gunicorn = "*"
 pytest = "*"
 pytest-html = "*"
 pytest-cov = "*"
+mypy = "*"
 
 [scripts]
 qt = "python -m unittest tests/unit/core/test_json_helper.py"
