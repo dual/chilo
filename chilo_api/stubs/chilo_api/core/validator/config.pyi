@@ -1,0 +1,3 @@
+class ConfigValidator:
+    @staticmethod
+    def validate(**kwargs) -> None: ...
