@@ -1,3 +1,0 @@
-from chilo_api import logger as logger
-
-def log(**settings): ...

@@ -1,9 +1,0 @@
-from _typeshed import Incomplete
-
-class ResolverCache:
-    CACHE_ALL: str
-    CACHE_STATIC: str
-    CACHE_DYNAMIC: str
-    def __init__(self, **kwargs) -> None: ...
-    def get(self, method_path): ...
-    def put(self, route_path, endpoint, is_dynamic_route: bool = False, dynamic_parts: Incomplete | None = None) -> None: ...

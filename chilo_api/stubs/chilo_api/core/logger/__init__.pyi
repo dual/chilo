@@ -1,3 +1,0 @@
-from chilo_api.core.logger.common import CommonLogger as CommonLogger
-
-def log(**kwargs) -> None: ...
