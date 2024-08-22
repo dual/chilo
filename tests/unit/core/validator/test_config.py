@@ -23,10 +23,10 @@ class ConfigValidatorTest(unittest.TestCase):
 
     def test_config_validator_validates_base_path(self):
         try:
-            ConfigValidator.validate(**{})
+            ConfigValidator.validate(base_path=1)
         except RuntimeError as runtime_error:
             self.assertTrue(isinstance(runtime_error, RuntimeError))
-            self.assertEqual('base_path string is required', str(runtime_error))
+            self.assertEqual('base_path must be a string', str(runtime_error))
 
     def test_config_validator_validates_routing_handlers_is_required(self):
         try:

@@ -12,6 +12,7 @@ class MockArgs:
 
 
 class MockApi:
+    api_type = 'rest'
     api = 'api.py'
     host = '127.0.0.1'
     port = 3000
