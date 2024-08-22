@@ -1,53 +1,56 @@
 from unittest import mock, TestCase
 
-from chilo_api.cli.openapi import generate_openapi
-from chilo_api.cli import CliManager
+from chilo_api.cli.openapi import OpenAPI
+from chilo_api.cli import CLIManager
 
 
 def mock_open(*args, **kwargs):
+    # This mock function is intentionally left empty to override file writing during tests.
     pass
 
 
-class GenerateOpenApiTest(TestCase):
+class OpenAPITest(TestCase):
 
     @mock.patch('sys.argv', [
-        'CliManager',
+        'CLIManager',
         'generate-openapi',
-        '--api=api',
+        '--api=api_rest',
         '--output=tests',
         '--format=json,yml',
         '--delete'
     ])
     @mock.patch('chilo_api.cli.openapi.OpenAPIFileWriter.write_openapi', mock_open)
     def test_generate_openapi(self):
-        manager = CliManager()
-        generate_openapi(manager.args)
+        manager = CLIManager()
+        OpenAPI(manager.args).generate()
         self.assertTrue(True)  # should error and fail test if broken
 
     @mock.patch('sys.argv', [
-        'CliManager',
+        'CLIManager',
         'generate-openapi',
-        '--api=api',
-        '--output=tests/mocks/openapi/discoverable/removed',
+        '--api=api_rest',
+        '--output=tests/unit/mocks/openapi/discoverable/removed',
         '--format=json,yml',
         '--delete'
     ])
     @mock.patch('chilo_api.cli.openapi.OpenAPIFileWriter.write_openapi', mock_open)
     def test_generate_openapi_with_removed_paths_and_methods(self):
-        manager = CliManager()
-        generate_openapi(manager.args)
-        self.assertTrue(True)  # should error and fail test if broken
+        manager = CLIManager()
+        OpenAPI(manager.args).generate()
+        # Ensure the args contain the expected output path for removed paths/methods
+        self.assertIn('tests/unit/mocks/openapi/discoverable/removed', manager.args.output)
 
     @mock.patch('sys.argv', [
-        'CliManager',
+        'CLIManager',
         'generate-openapi',
-        '--api=api',
-        '--output=tests/mocks/openapi/discoverable/existing',
+        '--api=api_rest',
+        '--output=tests/unit/mocks/openapi/discoverable/existing',
         '--format=json,yml',
         '--delete'
     ])
     @mock.patch('chilo_api.cli.openapi.OpenAPIFileWriter.write_openapi', mock_open)
     def test_generate_openapi_with_existing_json(self):
-        manager = CliManager()
-        generate_openapi(manager.args)
-        self.assertTrue(True)  # should error and fail test if broken
+        manager = CLIManager()
+        OpenAPI(manager.args).generate()
+        # Ensure the args contain the expected output path for existing json
+        self.assertIn('tests/unit/mocks/openapi/discoverable/existing', manager.args.output)

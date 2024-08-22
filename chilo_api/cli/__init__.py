@@ -1,26 +1,40 @@
 import argparse
 
-from chilo_api.cli.openapi import generate_openapi
-from chilo_api.cli.server import run_server
+from chilo_api.cli.openapi import OpenAPI
+from chilo_api.cli.server import Server
 
 
-class CliManager:
+class CLIManager:
+    '''
+    Manages the CLI commands for the Chilo API.
+    This class provides methods to parse command line arguments and execute the appropriate actions.
 
-    def __init__(self):
-        self.__args = self.__get_command_line_args()
+    Attributes
+    ----------
+    args: argparse.Namespace
+        Parsed command line arguments.
+
+    Methods
+    ----------
+    run():
+        Parses command line arguments and executes the corresponding action.
+    '''
+
+    def __init__(self) -> None:
+        self.__args: argparse.Namespace = self.__get_command_line_args()
 
     @property
-    def args(self):
+    def args(self) -> argparse.Namespace:
         return self.__args
 
-    def run(self):
+    def run(self) -> None:
         if self.args.action == 'generate-openapi':
-            generate_openapi(self.args)
+            OpenAPI(self.args).generate()
         elif self.args.action == 'serve':
-            run_server(self.args)
+            Server(self.args).run()
 
-    def __get_command_line_args(self):
-        parser = argparse.ArgumentParser(
+    def __get_command_line_args(self) -> argparse.Namespace:
+        parser: argparse.ArgumentParser = argparse.ArgumentParser(
             prog='Chilo',
             description='Chilo CLI Tool'
         )
@@ -59,14 +73,12 @@ class CliManager:
             '-s',
             '--host',
             help='(optional) host ip/domain for server; default: 127.0.0.1',
-            default='127.0.0.1',
             required=False
         )
         parser.add_argument(
             '-p',
             '--port',
             help='(optional) port to run server on; default 3000',
-            default=3000,
             required=False
         )
         parser.add_argument(

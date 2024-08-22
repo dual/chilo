@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package streamer;
+
+service Streamer {
+  rpc Stream(stream StreamRequest) returns (stream StreamResponse);
+}
+
+message StreamRequest {
+  string query = 1;
+}
+
+message StreamResponse {
+  string results = 1;
+}

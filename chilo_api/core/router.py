@@ -1,23 +1,21 @@
-import datetime
 from typing_extensions import Unpack
+from typing import Any, Callable, Iterator, Optional, Union
 
 from werkzeug.wrappers import Request as WSGIRequest, Response as WSGIResponse
 
-from chilo_api.core.logger.common import CommonLogger
-from chilo_api.core.exception import ApiException, ApiTimeOutException
 from chilo_api.core.validator.config import ConfigValidator
-from chilo_api.core.json_helper import JsonHelper
-from chilo_api.core.request import Request
+from chilo_api.core.executor import Executor
+from chilo_api.core.rest.request import Request
+from chilo_api.core.rest.response import Response
 from chilo_api.core.resolver import Resolver
-from chilo_api.core.response import Response
+from chilo_api.core.rest.pipeline import RestPipeline
 from chilo_api.core.types.router_settings import RouterSettings
-from chilo_api.core.validator import Validator
 
 
 class Router:
     '''
     A class to route request to appropriate file/endpoint and run the appropriate middleware
-    
+
     Attributes
     ----------
     handlers: str
@@ -38,23 +36,25 @@ class Router:
         determines if api should validate request against spece openapi spec
     openapi_validate_response: bool
         determines if api should validate response against spece openapi spec
-    
+
     Methods
     ----------
     route(environ, server_response):
         routes request to the correct endpoint and runs approprite middleware
     '''
 
-    def __init__(self, **kwargs: Unpack[RouterSettings]):
+    def __init__(self, **kwargs: Unpack[RouterSettings]) -> None:
         '''
         Constructs all necessary configuration for the router
-        
+
         Parameters
         ----------
         handlers: str
             glob pattern location of the handler files eligible for being a handler
-        base_path: str
-            base path of the url to route from (ex. http://locahost/{base_path}/your-endpoint)
+        base_path: str, optional
+            base path of the url to route from (ex. http://locahost/{base_path}/your-endpoint); default /
+        protobufs: str
+            glob pattern location of where the protobufs are located
         host: str, optional
             host url to run the api on (default is 127.0.0.1)
         port: int, optional
@@ -87,137 +87,104 @@ class Router:
             determines if api should validate response against spece openapi spec (default is False)
         '''
         ConfigValidator.validate(**kwargs)
-        self.__handlers = kwargs['handlers']
-        self.__base_path = kwargs['base_path']
-        self.__host = kwargs.get('host', '127.0.0.1')
-        self.__port = kwargs.get('port', 3000)
-        self.__reload = kwargs.get('reload', False)
-        self.__verbose = kwargs.get('verbose', False)
-        self.__before_all = kwargs.get('before_all')
-        self.__after_all = kwargs.get('after_all')
-        self.__when_auth_required = kwargs.get('when_auth_required')
-        self.__on_error = kwargs.get('on_error')
-        self.__on_timeout = kwargs.get('on_timeout')
-        self.__cors = kwargs.get('cors', True)
-        self.__timeout = kwargs.get('timeout', None)
-        self.__output_error = kwargs.get('output_error', False)
-        self.__openapi_validate_request = kwargs.get('openapi_validate_request', False)
-        self.__openapi_validate_response = kwargs.get('openapi_validate_response', False)
-        self.__resolver = Resolver(**kwargs)
-        self.__validator = Validator(**kwargs)
-        self.__logger = CommonLogger(**kwargs)
-        self.__resolver.auto_load()
-        self.__validator.auto_load()
+        self.__handlers: str = kwargs['handlers']
+        self.__base_path: str = kwargs.get('base_path', '/')
+        self.__protobufs: Optional[str] = kwargs.get('protobufs')
+        self.__api_type: str = kwargs.get('api_type', 'rest')
+        self.__host: str = kwargs.get('host', '127.0.0.1')
+        self.__port: int = kwargs.get('port', 3000)
+        self.__reload: bool = kwargs.get('reload', False)
+        self.__verbose: bool = kwargs.get('verbose', False)
+        self.__before_all: Optional[Callable[[Any, Any, Any], None]] = kwargs.get('before_all')
+        self.__after_all: Optional[Callable[[Any, Any, Any], None]] = kwargs.get('after_all')
+        self.__when_auth_required: Optional[Callable[[Any, Any, Any], None]] = kwargs.get('when_auth_required')
+        self.__on_error: Optional[Callable[[Any, Any, Any], None]] = kwargs.get('on_error')
+        self.__on_timeout: Optional[Callable[[Any, Any, Any], None]] = kwargs.get('on_timeout')
+        self.__cors: Union[bool, str] = kwargs.get('cors', False)
+        self.__timeout: Optional[int] = kwargs.get('timeout', None)
+        self.__output_error: bool = kwargs.get('output_error', False)
+        self.__openapi_validate_request: bool = kwargs.get('openapi_validate_request', False)
+        self.__openapi_validate_response: bool = kwargs.get('openapi_validate_response', False)
+        self.__enable_reflection: bool = kwargs.get('reflection', False)
+        self.__executor: Executor = Executor(RestPipeline(**kwargs), Resolver(**kwargs), **kwargs)
 
     @property
-    def handlers(self):
+    def handlers(self) -> str:
         return self.__handlers
 
     @property
-    def base_path(self):
+    def base_path(self) -> str:
         return self.__base_path
 
     @property
-    def host(self):
+    def api_type(self) -> str:
+        return self.__api_type
+
+    @property
+    def host(self) -> str:
         return self.__host
 
     @property
-    def port(self):
+    def port(self) -> int:
         return self.__port
 
     @property
-    def reload(self):
+    def reload(self) -> bool:
         return self.__reload
 
     @property
-    def verbose(self):
+    def verbose(self) -> bool:
         return self.__verbose
 
     @property
-    def timeout(self):
+    def timeout(self) -> Optional[int]:
         return self.__timeout
 
     @property
-    def openapi_validate_request(self):
+    def output_error(self) -> bool:
+        return self.__output_error
+
+    @property
+    def protobufs(self) -> Optional[str]:
+        return self.__protobufs
+
+    @property
+    def openapi_validate_request(self) -> bool:
         return self.__openapi_validate_request
 
     @property
-    def openapi_validate_response(self):
+    def openapi_validate_response(self) -> bool:
         return self.__openapi_validate_response
 
-    def route(self, environ, server_response):
-        request = Request(wsgi=WSGIRequest(environ), timeout=self.__timeout)
-        response = Response(cors=self.__cors, wsgi=WSGIResponse, environ=environ, server_response=server_response)
-        try:
-            self.__run_route_procedure(request, response)
-        except ApiTimeOutException as timeout_error:
-            kwargs = {'code': timeout_error.code, 'key_path': timeout_error.key_path, 'message': timeout_error.message, 'error': timeout_error}
-            self.__handle_error(request, response, self.__on_timeout, **kwargs)
-        except ApiException as api_error:
-            kwargs = {'code': api_error.code, 'key_path': api_error.key_path, 'message': api_error.message, 'error': api_error}
-            self.__handle_error(request, response, self.__on_error, **kwargs)
-        except Exception as error:
-            output = str(error) if self.__output_error else 'internal service error'
-            kwargs = {'code': 500, 'key_path': 'unknown', 'message': output, 'error': error}
-            self.__handle_error(request, response, **kwargs)
-        self.__log_verbose(request, response)
-        self.__resolver.reset()
-        return response.server
+    @property
+    def on_error(self) -> Optional[Callable[[Any, Any, Any], None]]:
+        return self.__on_error
 
-    def __run_route_procedure(self, request, response):
-        endpoint = self.__resolver.get_endpoint(request)
-        self.__run_before_all(request, response, endpoint)
-        self.__run_when_auth_required(request, response, endpoint)
-        self.__run_request_validation(request, response, endpoint)
-        if not response.has_errors:
-            endpoint.run(request, response)
-        self.__run_response_validation(request, response, endpoint)
-        self.__run_after_all(request, response, endpoint)
-        return response
+    @property
+    def before_all(self) -> Optional[Callable[[Any, Any, Any], None]]:
+        return self.__before_all
 
-    def __run_before_all(self, request, response, endpoint):
-        if not response.has_errors and self.__before_all and callable(self.__before_all):
-            self.__before_all(request, response, endpoint.requirements)
+    @property
+    def after_all(self) -> Optional[Callable[[Any, Any, Any], None]]:
+        return self.__after_all
 
-    def __run_when_auth_required(self, request, response, endpoint):
-        if not response.has_errors and self.__when_auth_required and callable(self.__when_auth_required):
-            if (self.__openapi_validate_request and self.__validator.request_has_security(request)) or endpoint.requires_auth:
-                self.__when_auth_required(request, response, endpoint.requirements)
+    @property
+    def when_auth_required(self) -> Optional[Callable[[Any, Any, Any], None]]:
+        return self.__when_auth_required
 
-    def __run_request_validation(self, request, response, endpoint):
-        if not response.has_errors and self.__openapi_validate_request:
-            self.__validator.validate_request_with_openapi(request, response)
-        elif not response.has_errors and endpoint.has_requirements:
-            self.__validator.validate_request(request, response, endpoint.requirements)
+    @property
+    def on_timeout(self) -> Optional[Callable[[Any, Any, Any], None]]:
+        return self.__on_timeout
 
-    def __run_response_validation(self, request, response, endpoint):
-        if not response.has_errors and self.__openapi_validate_response:
-            self.__validator.validate_response_with_openapi(request, response)
-        elif not response.has_errors and endpoint.has_required_response:
-            self.__validator.validate_response(response, endpoint.requirements)
+    @property
+    def cors(self) -> Union[bool, str]:
+        return self.__cors
 
-    def __run_after_all(self, request, response, endpoint):
-        if not response.has_errors and self.__after_all and callable(self.__after_all):
-            self.__after_all(request, response, endpoint.requirements)
+    @property
+    def enable_reflection(self) -> bool:
+        return self.__api_type == 'grpc' and self.__enable_reflection
 
-    def __handle_error(self, request, response, error_func=None, **kwargs):
-        try:
-            response.code = kwargs['code']
-            response.set_error(key_path=kwargs['key_path'], message=kwargs['message'])
-            if error_func and callable(error_func):
-                error_func(request, response, kwargs.get('error'))
-            else:
-                self.__logger.log(level='ERROR', log={'request': request, 'response': response, 'error': kwargs})
-        except Exception as exception:
-            self.__logger.log(level='ERROR', log=exception)
-
-    def __log_verbose(self, request, response):
-        if self.__verbose:
-            self.__logger.log(
-                level='DEBUG',
-                log={
-                    '_timestamp': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                    'request': JsonHelper.decode(str(request)),
-                    'response': JsonHelper.decode(str(response))
-                }
-            )
+    def route(self, environ, server_response) -> Union[WSGIResponse, Iterator[bytes]]:
+        request: Request = Request(wsgi=WSGIRequest(environ), timeout=self.__timeout)
+        response: Response = Response(cors=self.__cors, wsgi=WSGIResponse, environ=environ, server_response=server_response)
+        return self.__executor.run(request, response)

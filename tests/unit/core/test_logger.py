@@ -40,20 +40,20 @@ class LoggerTest(unittest.TestCase):
 
     def test_logger_logs_error_json(self):
         try:
-            raise Exception('error-object')
-        except Exception as error:
+            raise RuntimeError('error-object')
+        except RuntimeError as error:
             logger.log(LOG_FORMAT='JSON', level='ERROR', log=error)
 
     def test_logger_logs_error_inline(self):
         try:
-            raise Exception('error-object')
-        except Exception as error:
+            raise RuntimeError('error-object')
+        except RuntimeError as error:
             logger.log(level='ERROR', log=error)
 
     def test_logger_logs_error_as_object(self):
         try:
-            raise 'error-string'
-        except Exception as error:
+            raise RuntimeError('error-string') # type: ignore
+        except RuntimeError as error:
             logger.log(level='ERROR', log={'error': error, 'request': 'request'})
 
     def test_logger_logs_ignore_info(self):

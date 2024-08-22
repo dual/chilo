@@ -1,0 +1,16 @@
+{
+  "details": {
+    "methodFqn": "messenger.Messenger.SendMessage"
+  },
+  "script": {
+    "src": "SendMessage.js"
+  },
+  "requests": [
+    {
+      "location": "SendMessage-request.json"
+    }
+  ],
+  "operationType": "unary",
+  "invokerName": "grpc",
+  "importStreamId": "53d90ff7-722a-4998-9c29-059c815122f1"
+}

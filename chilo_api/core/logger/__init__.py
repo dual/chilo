@@ -1,7 +1,9 @@
+from typing import Any
+
 from chilo_api.core.logger.common import CommonLogger
 
 
-def log(**kwargs):
+def log(**kwargs: Any) -> None:
     '''
     Log function to log your desired input/ouput
 
@@ -13,7 +15,7 @@ def log(**kwargs):
         The thing to log
     '''
     try:
-        logger = CommonLogger(**kwargs)
+        logger: CommonLogger = CommonLogger(**kwargs)
         logger.log(**kwargs)
     except Exception as exception:
         raise RuntimeError(exception) from exception

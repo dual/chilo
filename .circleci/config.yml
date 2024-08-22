@@ -1,36 +1,37 @@
 version: 2.1
 orbs:
-    python: circleci/python@2.1.1
-    sonarcloud: sonarsource/sonarcloud@2.0.0
+    python: circleci/python@3.2.0
+    sonarcloud: sonarsource/sonarcloud@3.0.0
 commands:
     install-postman-cli:
         steps:
             - run: curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
     postman-test-api:
         steps:
-            - run: postman collection run tests/integration/chilo.postman_collection.json --environment tests/integration/chilo.postman_environment.json --bail failure --verbose
+            - run: postman collection run tests/integration/rest/chilo.postman_collection.json --environment tests/integration/rest/chilo.postman_environment.json --bail failure --verbose
     setup-artifacts:
         steps:
-            - run: mkdir ./coverage && mkdir ./coverage/lint && mkdir ./coverage/reports && mkdir ./coverage/pretty || exit 0
+            - run: mkdir ./coverage && mkdir ./coverage/lint && mkdir ./coverage/reports && mkdir ./coverage/pretty && mkdir ./coverage/typing || exit 0
     setup-mock-unit-test-api:
         steps:
-            - run: ln -s tests/mocks/settings/unit_test_api.py api.py
-    setup-mock-integration-basic-api:
+            - run: ln -s tests/unit/mocks/rest/api.py api_rest.py
+            - run: ln -s tests/unit/mocks/grpc/api.py api_grpc.py
+    setup-mock-rest-integration-basic-api:
         steps:
-            - run: ln -s tests/mocks/settings/integration_basic_api.py api.py
-    setup-mock-integration-openapi-api:
+            - run: ln -s tests/integration/mocks/rest/declarative_api.py api_rest.py
+    setup-mock-rest-integration-openapi-api:
         steps:
-            - run: ln -s tests/mocks/settings/integration_openapi_api.py api.py
+            - run: ln -s tests/integration/mocks/rest/openapi_api.py api_rest.py
     run-api:
         steps:
             - run: 
-                name: Run the api
+                name: Run the rest api
                 background: true
-                command: pipenv run api
+                command: pipenv run rest
     run-gunicorn:
         steps:
             - run: 
-                name: Run the api with gunicorn
+                name: Run the rest api with gunicorn
                 background: true
                 command: pipenv run gunicorn
     sleep:
@@ -42,7 +43,7 @@ commands:
             - store_artifacts:
                 path: ./coverage
             - store_test_results:
-                path: ./coverage/reports
+                path: ./coverage/reports/junit.xml
     pypi-setup:
         steps:
             - run: echo -e "[pypi]" >> ~/.pypirc
@@ -54,10 +55,24 @@ commands:
             - run: python3 setup.py sdist bdist_wheel
             - run: python3 -m pip install --user --upgrade twine
             - run: python3 -m twine upload dist/*
+    mypy-test:
+        steps:
+            - run: pipenv run mypy-install-stubs
+            - run: pipenv run mypy
+            - run: pipenv run mypy-report
+            - store_artifacts:
+                path: ./coverage/typing
+    lint-code:
+        steps:
+            - run: pipenv run lint
+            - run: pipenv run pylint chilo_api --output-format=json > ./coverage/lint/pylint_report.json || exit 0
+            - run: pipenv run pylint-json2html ./coverage/lint/pylint_report.json -o ./coverage/lint/pylint_report.html || exit 0
+            - store_artifacts:
+                path: ./coverage/lint
 jobs:
     install-build:
         docker:
-            - image: cimg/python:3.9
+            - image: cimg/python:3.9.17
         steps:
             - checkout
             - python/install-packages:
@@ -67,9 +82,25 @@ jobs:
                 root: ~/project
                 paths:
                     - ./*
+    lint:
+        docker:
+            - image: cimg/python:3.9.17
+        steps:
+            - attach_workspace:
+                at: ~/project
+            - setup-artifacts
+            - lint-code
+    type-check:
+        docker:
+            - image: cimg/python:3.9.17
+        steps:
+            - attach_workspace:
+                at: ~/project
+            - setup-artifacts
+            - mypy-test
     unit-test:
         docker:
-            - image: cimg/python:3.9
+            - image: cimg/python:3.9.17
         steps:
             - attach_workspace:
                 at: ~/project
@@ -77,47 +108,42 @@ jobs:
             - setup-mock-unit-test-api
             - python-unit-test-report
             - sonarcloud/scan
-    ensure-integration-tests-after-unit-tests:
-        docker:
-            - image: cimg/python:3.9
-        steps:
-            - sleep
     integration-test-declarative:
         docker:
-            - image: cimg/python:3.9
+            - image: cimg/python:3.9.17
         steps:
             - attach_workspace:
                 at: ~/project
             - install-postman-cli
-            - setup-mock-integration-basic-api
+            - setup-mock-rest-integration-basic-api
             - run-api
             - sleep
             - postman-test-api
     integration-test-openapi:
         docker:
-            - image: cimg/python:3.9
+            - image: cimg/python:3.9.17
         steps:
             - attach_workspace:
                 at: ~/project
             - install-postman-cli
-            - setup-mock-integration-openapi-api
+            - setup-mock-rest-integration-openapi-api
             - run-api
             - sleep
             - postman-test-api
     integration-test-gunicorn:
         docker:
-            - image: cimg/python:3.9
+            - image: cimg/python:3.9.17
         steps:
             - attach_workspace:
                 at: ~/project
             - install-postman-cli
-            - setup-mock-integration-basic-api
+            - setup-mock-rest-integration-basic-api
             - run-gunicorn
             - sleep
             - postman-test-api
     install-build-deploy:
         docker:
-            - image: cimg/python:3.9
+            - image: cimg/python:3.9.17
         steps:
             - checkout
             - python/install-packages:
@@ -136,20 +162,28 @@ workflows:
     install-build-test-workflow:
         jobs:
             - install-build
+            - lint:
+                requires:
+                    - install-build
+            - type-check:
+                  requires:
+                    - install-build
             - unit-test:
                 context:
                     - sonarcloud
                 requires:
                     - install-build
-            - ensure-integration-tests-after-unit-tests:
-                requires:
-                    - install-build 
             - integration-test-declarative:
                 requires:
-                    - ensure-integration-tests-after-unit-tests
+                    - install-build
             - integration-test-openapi:
                 requires:
-                    - ensure-integration-tests-after-unit-tests
+                    - install-build
             - integration-test-gunicorn:
                 requires:
-                    - ensure-integration-tests-after-unit-tests
+                    - install-build
+
+# Commmand to run Kreya CLI
+# wget https://stable-downloads.kreya.app/1.17.0/kreyac-linux-x64.tar.gz
+# tar -xvzf kreyac-linux-x64.tar.gz
+# ./kreyac

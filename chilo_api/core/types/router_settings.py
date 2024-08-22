@@ -1,30 +1,31 @@
-from enum import Enum
-from typing import TypedDict, Callable, Optional
+from operator import is_
+from typing_extensions import TypedDict, Required, NotRequired, Callable, Literal, Any
 
 
-class Cache(Enum):
-    ALL = 'all'
-    STATIC = 'static-only'
-    DYNAMIC = 'dynamic-only'
-
-
-class RouterSettings(TypedDict):
-    handlers: str
-    base_path: str
-    host: str
-    port: int
-    reload: bool
-    verbose: bool
-    before_all: Optional[Callable]
-    after_all: Optional[Callable]
-    when_auth_required: Optional[Callable]
-    on_error: Optional[Callable]
-    on_timeout: Optional[Callable]
-    cors: bool
-    cache_size: Optional[int]
-    cache_mode: Cache
-    timeout: Optional[int]
-    output_error: bool
-    openapi: Optional[str]
-    openapi_validate_request: bool
-    openapi_validate_response: bool
+class RouterSettings(TypedDict, total=False):
+    handlers: Required[str]
+    protobufs: NotRequired[str]
+    base_path: NotRequired[str]
+    host: NotRequired[str]
+    port: NotRequired[int]
+    reload: NotRequired[bool]
+    verbose: NotRequired[bool]
+    api_type: NotRequired[Literal['rest', 'grpc', 'graphql']]
+    before_all: NotRequired[Callable]
+    after_all: NotRequired[Callable]
+    when_auth_required: NotRequired[Callable]
+    on_error: NotRequired[Callable]
+    on_timeout: NotRequired[Callable]
+    cors: NotRequired[bool]
+    cache_size: NotRequired[int]
+    cache_mode: NotRequired[Literal['all', 'static-only', 'dynamic-only']]
+    timeout: NotRequired[int]
+    output_error: NotRequired[bool]
+    openapi: NotRequired[str]
+    openapi_validate_request: NotRequired[bool]
+    openapi_validate_response: NotRequired[bool]
+    openapi_validate_spec: NotRequired[bool]
+    is_grpc: NotRequired[bool]
+    grpc_endpoint: NotRequired[Any]
+    default_error_message: NotRequired[str]
+    reflection: NotRequired[bool]

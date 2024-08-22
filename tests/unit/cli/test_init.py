@@ -1,18 +1,32 @@
 import unittest
 from unittest.mock import patch
 
-from chilo_api.cli import CliManager
+from chilo_api.cli import CLIManager
 
 
-def mock_run(*args, **kwargs):
-    pass
+class MockServer:
+    def __init__(self, args):
+        self.args = args
+
+    def run(self):
+        # This mock function is intentionally left empty to replace actual implementations during testing.
+        pass
 
 
-class CliManagerTest(unittest.TestCase):
+class MockGenerateOpenApi:
+    def __init__(self, args):
+        self.args = args
 
-    @patch('chilo_api.cli.generate_openapi', mock_run)
+    def generate(self):
+        # This mock function is intentionally left empty to replace actual implementations during testing.
+        pass
+
+
+class CLIManagerTest(unittest.TestCase):
+
+    @patch('chilo_api.cli.OpenAPI', MockGenerateOpenApi)
     @patch('sys.argv', [
-        'CliManager',
+        'CLIManager',
         'generate-openapi',
         '--api=api',
         '--output=tests',
@@ -20,20 +34,20 @@ class CliManagerTest(unittest.TestCase):
         '--delete'
     ])
     def test_args(self):
-        manager = CliManager()
+        manager = CLIManager()
         manager.run()
         self.assertEqual('api', manager.args.api)
         self.assertEqual('tests', manager.args.output)
         self.assertListEqual(['json', 'yml'], manager.args.format.split(','))
         self.assertTrue(manager.args.delete)
 
-    @patch('chilo_api.cli.run_server', mock_run)
+    @patch('chilo_api.cli.Server', MockServer)
     @patch('sys.argv', [
-        'CliManager',
+        'CLIManager',
         'serve',
         '--api=api'
     ])
     def test_run(self):
-        manager = CliManager()
+        manager = CLIManager()
         manager.run()
         self.assertEqual('api', manager.args.api)
