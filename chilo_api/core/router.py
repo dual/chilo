@@ -106,6 +106,7 @@ class Router:
         self.__openapi_validate_request = kwargs.get('openapi_validate_request', False)
         self.__openapi_validate_response = kwargs.get('openapi_validate_response', False)
         if self.api_type == 'rest':
+            kwargs['base_path'] = self.__base_path
             self.__resolver = Resolver(**kwargs)
             self.__validator = Validator(**kwargs)
             self.__logger = CommonLogger(**kwargs)
