@@ -17,6 +17,18 @@ def __start_server(server):
     )
 
 
+def __run_rest_server(validaitor, server):
+    validaitor.validate(server)
+    __start_server(server)
+
+
+def __run_grpc_server(_):
+    print('GRPC RUNNING!!!!!')
+    # 1. scan all handlers looking for rpc_* functions
+        # 1a. [if rpc] capture the file name, function name, protobuf kwarg in requirements
+        # 1b. [for every unique protobuf file] generate code using the command-line
+
+
 def __get_server(args):
     importer = ServerImporter(args.api)
     api = importer.get_api_module()
@@ -32,7 +44,7 @@ def run_server(args):
 
     server = __get_server(args)
     logger.log_settings(server)
-
-    validaitor.validate(server)
-
-    __start_server(server)
+    if server.api_type == 'grpc':
+        __run_grpc_server(server)
+    else:
+        __run_rest_server(validaitor, server)

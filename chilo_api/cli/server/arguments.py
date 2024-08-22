@@ -6,6 +6,7 @@ class ServerArguments:
         self.__port = self.__get_setting('port', args, api)
         self.__reload = self.__get_setting('reload', args, api)
         self.__verbose = self.__get_setting('verbose', args, api)
+        self.__api_type = api.api_type
         self.__timeout = api.timeout
         self.__openapi_validate_request = api.openapi_validate_request
         self.__openapi_validate_response = api.openapi_validate_response
@@ -42,6 +43,10 @@ class ServerArguments:
     @property
     def openapi_validate_response(self):
         return self.__openapi_validate_response
+
+    @property
+    def api_type(self):
+        return self.__api_type
 
     def route(self, environ, server_response):
         return self.__route(environ, server_response)

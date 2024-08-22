@@ -88,7 +88,9 @@ class Router:
         '''
         ConfigValidator.validate(**kwargs)
         self.__handlers = kwargs['handlers']
-        self.__base_path = kwargs['base_path']
+        self.__base_path = kwargs.get('base_path', '/')
+        self.__protobufs = kwargs.get('protobufs')
+        self.__api_type = kwargs.get('api_type', 'rest')
         self.__host = kwargs.get('host', '127.0.0.1')
         self.__port = kwargs.get('port', 3000)
         self.__reload = kwargs.get('reload', False)
@@ -103,11 +105,12 @@ class Router:
         self.__output_error = kwargs.get('output_error', False)
         self.__openapi_validate_request = kwargs.get('openapi_validate_request', False)
         self.__openapi_validate_response = kwargs.get('openapi_validate_response', False)
-        self.__resolver = Resolver(**kwargs)
-        self.__validator = Validator(**kwargs)
-        self.__logger = CommonLogger(**kwargs)
-        self.__resolver.auto_load()
-        self.__validator.auto_load()
+        if self.api_type == 'rest':
+            self.__resolver = Resolver(**kwargs)
+            self.__validator = Validator(**kwargs)
+            self.__logger = CommonLogger(**kwargs)
+            self.__resolver.auto_load()
+            self.__validator.auto_load()
 
     @property
     def handlers(self):
@@ -116,6 +119,10 @@ class Router:
     @property
     def base_path(self):
         return self.__base_path
+
+    @property
+    def api_type(self):
+        return self.__api_type
 
     @property
     def host(self):
@@ -136,6 +143,10 @@ class Router:
     @property
     def timeout(self):
         return self.__timeout
+
+    @property
+    def protobufs(self):
+        return self.__protobufs
 
     @property
     def openapi_validate_request(self):

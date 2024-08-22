@@ -11,6 +11,7 @@ class ServerLogger:  # pragma: no cover
 
     def log_settings(self, server):
         print('|--------------------- settings ---------------------|')
+        print(f'| API TYPE: {server.api_type}')
         print(f'| HOST: {server.host} (from {server.source["host"]})')
         print(f'| PORT: {server.port} (from {server.source["port"]})')
         print(f'| RELOAD: {server.reload} (from {server.source["reload"]})')

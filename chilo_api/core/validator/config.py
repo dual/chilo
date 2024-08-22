@@ -2,8 +2,6 @@ class ConfigValidator:
 
     @staticmethod
     def validate(**kwargs):
-        if not kwargs.get('base_path') or not isinstance(kwargs.get('base_path'), str):
-            raise RuntimeError('base_path string is required')
         if not kwargs.get('handlers') or not isinstance(kwargs.get('handlers'), str):
             raise RuntimeError('handlers is required; must be glob pattern string {route: file_path}')
         if kwargs.get('openapi') and not isinstance(kwargs.get('openapi'), str):
