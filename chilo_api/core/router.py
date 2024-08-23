@@ -53,8 +53,10 @@ class Router:
         ----------
         handlers: str
             glob pattern location of the handler files eligible for being a handler
-        base_path: str
-            base path of the url to route from (ex. http://locahost/{base_path}/your-endpoint)
+        base_path: str, optional
+            base path of the url to route from (ex. http://locahost/{base_path}/your-endpoint); default /
+        protobufs: str
+            glob pattern location of where the protobufs are located
         host: str, optional
             host url to run the api on (default is 127.0.0.1)
         port: int, optional

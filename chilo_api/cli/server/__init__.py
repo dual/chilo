@@ -6,6 +6,8 @@ from chilo_api.cli.server.importer import ServerImporter
 from chilo_api.cli.server.logger import ServerLogger
 from chilo_api.cli.server.validator import ServerValidator
 
+from chilo_api.cli.grpc import import_rpc_funcs
+
 
 def __start_server(server):
     run_simple(
@@ -22,8 +24,9 @@ def __run_rest_server(validaitor, server):
     __start_server(server)
 
 
-def __run_grpc_server(_):
-    print('GRPC RUNNING!!!!!')
+def __run_grpc_server(server):
+    rpc_funcs = import_rpc_funcs(server)
+    print(rpc_funcs)
     # 1. scan all handlers looking for rpc_* functions
         # 1a. [if rpc] capture the file name, function name, protobuf kwarg in requirements
         # 1b. [for every unique protobuf file] generate code using the command-line

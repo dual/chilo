@@ -1,5 +1,5 @@
 import os
-import importlib.util
+import importlib
 
 from chilo_api import Chilo
 

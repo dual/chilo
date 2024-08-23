@@ -8,6 +8,8 @@ class ServerArguments:
         self.__verbose = self.__get_setting('verbose', args, api)
         self.__api_type = api.api_type
         self.__timeout = api.timeout
+        self.__handlers = api.handlers
+        self.__protobufs = api.protobufs
         self.__openapi_validate_request = api.openapi_validate_request
         self.__openapi_validate_response = api.openapi_validate_response
         self.__route = api.route
@@ -35,6 +37,14 @@ class ServerArguments:
     @property
     def timeout(self):
         return self.__timeout
+
+    @property
+    def handlers(self):
+        return self.__handlers
+
+    @property
+    def protobufs(self):
+        return self.__protobufs
 
     @property
     def openapi_validate_request(self):
