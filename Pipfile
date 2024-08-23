@@ -12,6 +12,8 @@ allow_prereleases = true
 [packages]
 art = "*"
 icecream = "*"
+grpcio = "==1.65.5"
+grpcio-tools = "==1.65.5"
 jsonref = "*"
 jsonschema = "*"
 msgspec = "*"
