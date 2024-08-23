@@ -28,9 +28,10 @@ def get_protobuf(file_list):
 
 def run_command(protobufs, server):
     for protobuf in protobufs:
-        protobuf_path = f'{server.protobufs}/{protobuf}'
-        print()
-        subprocess.run(['python', '-m', 'grpc_tools.protoc', '-I.', '--python_out=.', '--pyi_out=.', '--grpc_python_out=.', protobuf_path])
+        generated = f'{server.protobufs}/generated'
+        file = f'{server.protobufs}/{protobuf}'
+        command = f'--proto_path={server.protobufs} --python_out={generated} --pyi_out={generated} --grpc_python_out={generated} {file}'
+        subprocess.run(['python','-m','grpc_tools.protoc'].extend(command.split()))
 
 
 def import_rpc_funcs(server):
