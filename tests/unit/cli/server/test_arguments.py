@@ -1,4 +1,6 @@
+from asyncio import protocols
 import unittest
+from wsgiref import handlers
 
 from chilo_api.cli.server.arguments import ServerArguments
 
@@ -19,6 +21,8 @@ class MockApi:
     reload = False
     verbose = False
     timeout = None
+    handlers = 'tests/mocks/handlers'
+    protobufs = 'tests/mocks/grpc/unit_tests/protobufs'
     openapi_validate_request = False
     openapi_validate_response = False
 
