@@ -1,42 +1,33 @@
-import glob
-import importlib
-import os
-import subprocess
+from concurrent import futures
+import grpc
+
+from chilo_api.cli.grpc.commander import GRPCCommander
+from chilo_api.cli.grpc.endpoint import GRPCEndpoint
+from chilo_api.cli.grpc.importer import GRPCImporter
+from chilo_api.cli.grpc.scanner import GRPCScanner
 
 
-def get_glob_pattern(handlers):
-    if '*' in handlers and '.py' in handlers:
-        return handlers
-    return handlers + os.sep + '**' + os.sep + '*.py'
+def run_server(server):
+    gprc_server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    # calculator_pb2_grpc.add_CalculatorServicer_to_server(CalculatorServicer(), server)
+    gprc_server.add_insecure_port(f'[::]:{server.port}')  # 50051
+    gprc_server.start()
+    gprc_server.wait_for_termination()
 
 
-def get_protobuf(file_list):
-    protobufs = set()
-    for file_path in file_list:
-        import_path = file_path.replace('/', '.')
-        spec = importlib.util.spec_from_file_location(import_path, file_path)
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        rpcs = [v for v in dir(module) if v and v.startswith('rpc_')]
-        for rpc in rpcs:
-            func = getattr(module, rpc)
-            reqs = getattr(func, 'requirements', {})
-            if reqs.get('protobuf'):
-                protobufs.add(reqs['protobuf'])
-    return protobufs
+def generate_grpc_code(server):
+    scanner = GRPCScanner()
+    importer = GRPCImporter()
+    commander = GRPCCommander()
+
+    handlers = scanner.get_gprc_handers(server.handlers)
+    modules = importer.get_imported_modules(handlers)
+    endpoints = GRPCEndpoint.get_endpoints_from_modules(modules)
+    commander.generate_grpc_code(endpoints, server)
+    for endpoint in endpoints:
+        print(endpoint)
 
 
-def run_command(protobufs, server):
-    for protobuf in protobufs:
-        generated = f'{server.protobufs}/generated'
-        file = f'{server.protobufs}/{protobuf}'
-        command = f'--proto_path={server.protobufs} --python_out={generated} --pyi_out={generated} --grpc_python_out={generated} {file}'
-        subprocess.run(['python','-m','grpc_tools.protoc'].extend(command.split()))
-
-
-def import_rpc_funcs(server):
-    glob_pattern = get_glob_pattern(server.handlers)
-    file_list = glob.glob(glob_pattern, recursive=True)
-    protobufs = get_protobuf(file_list)
-    run_command(protobufs, server)
-    return protobufs
+def run_grpc_simple(server):
+    generate_grpc_code(server)
+    # run_server(server)
