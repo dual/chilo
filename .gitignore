@@ -134,6 +134,7 @@ Dockerfile
 
 #test outputs
 tests/outputs
+tests/mocks/grpc/unit_tests/protobufs/generated
 
 # symlink
 api.py
