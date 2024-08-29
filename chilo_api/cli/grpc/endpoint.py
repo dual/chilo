@@ -1,8 +1,11 @@
+import json
+
+
 class GRPCEndpoint:
 
     def __init__(self, **kwargs):
         self.__rpc = kwargs['rpc']
-        self.__rpc_name = kwargs['rpc_func_name']
+        self.__rpc_func_name = kwargs['rpc_func_name']
         self.__requirements  = kwargs['requirements']
         self.__protobuf = self.__requirements['protobuf']
 
@@ -27,7 +30,9 @@ class GRPCEndpoint:
 
     @property
     def rpc_name(self):
-        return self.rpc_func_name.split('rpc_')[1]
+        clean_space = self.rpc_func_name.split('rpc_')[1]
+        temp = clean_space.split('_')
+        return ''.join(ele.title() for ele in temp)
 
     @property
     def rpc(self):
@@ -40,3 +45,11 @@ class GRPCEndpoint:
     @property
     def protobuf(self):
         return self.__protobuf
+
+    def __str__(self):
+        return json.dumps({
+            'rpc_func_name': self.rpc_func_name,
+            'rpc_name': self.rpc_name,
+            'requirements': self.requirements,
+            'protobuf': self.protobuf
+        })
