@@ -9,8 +9,7 @@ from chilo_api.cli.server.validator import ServerValidator
 from chilo_api.cli.grpc import run_grpc_simple
 
 
-def __run_rest_server(validaitor, server):
-    validaitor.validate(server)
+def __run_rest_server(server):
     run_simple(
         server.host,
         server.port,
@@ -36,7 +35,8 @@ def run_server(args):
     server = ServerArguments(args, api)
     logger.log_settings(server)
 
+    validaitor.validate(server)
     if server.api_type == 'grpc':
         __run_grpc_server(server)
     else:
-        __run_rest_server(validaitor, server)
+        __run_rest_server(server)
