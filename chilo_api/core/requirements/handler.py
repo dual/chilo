@@ -40,7 +40,7 @@ class RequirementsHandler:
         self.__before: Optional[Callable[[Request, Response, Any], None]] = settings.get('before')
         self.__after: Optional[Callable[[Request, Response, Any], None]] = settings.get('after')
         self.__request_class: Optional[Callable[[Request], Any]] = settings.get('request_class')
-        self.__stream: bool = settings.get('stream', False)
+        self.__stream: bool = settings.get('stream_response', False)
 
     def raise_timeout(self, *_: Any) -> None:
         raise ApiTimeOutException()

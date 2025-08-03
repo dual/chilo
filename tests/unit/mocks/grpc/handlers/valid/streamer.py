@@ -6,10 +6,10 @@ from chilo_api import requirements, Request, Response
     protobuf='streamer.proto',
     service='Streamer',
     rpc='Stream',
-    stream=True
+    stream_response=True
 )
 def stream(request: Request, response: Response) -> Generator[Response, None, None]:
     for query in request.body:
-        response_msg = response.rpc_response() # type: ignore
+        response_msg = response.rpc_response()  # type: ignore
         response_msg.results = f"Received: {query.query}"
         yield response_msg
