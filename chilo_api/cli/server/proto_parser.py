@@ -1,5 +1,6 @@
 # type: ignore
 # pragma: no cover
+# pylint: skip-file
 # Parser for protocol buffer .proto files
 import enum as stdlib_enum
 from string import ascii_letters, digits, hexdigits, octdigits

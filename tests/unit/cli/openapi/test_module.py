@@ -17,7 +17,13 @@ class OpenAPIHandlerModuleTest(unittest.TestCase):
         if spec.loader is None:
             raise ImportError(f"Cannot load module loader for {import_path} from {file_path}")
         spec.loader.exec_module(handler_module)
-        return OpenAPIHandlerModule('tests/unit/mocks/', file_path, handler_module, method, 'chilo/example')
+        return OpenAPIHandlerModule(
+            handler_base='tests/unit/mocks/',
+            file_path=file_path,
+            module=handler_module,
+            method=method,
+            base='chilo/example'
+        )
 
     def setUp(self):
         self.module = self.__setup_module()

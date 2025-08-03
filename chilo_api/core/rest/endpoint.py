@@ -67,12 +67,11 @@ class Endpoint:
     def run(self, request: Request, response: Response) -> Response:
         if self.__method == 'options':
             return self.__run_options(request, response)
-        elif self.__method == 'head':
+        if self.__method == 'head':
             return self.__run_head(request, response)
         if self.__module_method is not None:
             return self.__module_method(request, response)
-        else:
-            raise ApiException(code=405, message=f'Method \"{self.__method}\" not allowed for this endpoint')  # pragma: no cover
+        raise ApiException(code=405, message=f'Method \"{self.__method}\" not allowed for this endpoint')  # pragma: no cover
 
     def stream(self, request: Request, response: Response) -> Generator:
         if self.__module_method is not None:
@@ -95,7 +94,7 @@ class Endpoint:
             return response
         except Exception as error:  # pragma: no cover
             logger.log(level='ERROR', log=error)
-            raise ApiException(code=403, message='method not allowed')
+            raise ApiException(code=403, message='method not allowed') from error
 
     def __get_module_methods_and_headers(self) -> Tuple[List[str], List[str]]:
         methods: List[str] = []

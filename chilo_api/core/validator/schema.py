@@ -1,7 +1,7 @@
 import copy
 import json
 import inspect
-from typing import Dict, Any, Optional, Union, List
+from typing import Dict, Any, Optional, Union
 
 import jsonref
 from pydantic import BaseModel
@@ -57,7 +57,7 @@ class Schema:
         body_spec: Dict[str, Any] = {}
         if required_body and inspect.isclass(required_body) and issubclass(required_body, BaseModel):
             return required_body.model_json_schema()
-        elif required_body and isinstance(required_body, dict):
+        if required_body and isinstance(required_body, dict):
             body_spec = required_body
         elif required_body and isinstance(required_body, str):
             body_spec = self.__get_component_spec(required_body)

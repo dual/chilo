@@ -1,4 +1,4 @@
-from typing import Any, Optional, Callable, Dict, Union
+from typing import Any, Optional, Dict, Union
 
 from chilo_api.core.types.server_settings import ServerSettings
 from chilo_api.core.router import Router
@@ -114,7 +114,7 @@ class ServerArguments:
             # Convert string values to appropriate types
             if key == 'port':
                 return int(arg_value) if isinstance(arg_value, str) else arg_value
-            elif key in ['reload', 'verbose']:
+            if key in ['reload', 'verbose']:
                 if isinstance(arg_value, str):
                     return arg_value.lower() in ('true', '1', 'yes', 'on')  # pragma: no cover
                 return bool(arg_value)

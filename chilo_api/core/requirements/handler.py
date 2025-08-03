@@ -1,8 +1,7 @@
-from typing import Any, Callable, TypeVar, Generator, Union, Optional
+from typing import Any, Callable, Generator, Union, Optional
 import functools
 import inspect
 import signal
-from typing_extensions import Unpack
 
 from chilo_api.core.exception import ApiTimeOutException
 from chilo_api.core.rest.request import Request
