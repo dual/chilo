@@ -1,7 +1,5 @@
 from asyncio import protocols
 import unittest
-from wsgiref import handlers
-
 from chilo_api.cli.server.arguments import ServerArguments
 
 
