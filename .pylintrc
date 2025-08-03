@@ -83,7 +83,7 @@ max-attributes=7
 min-public-methods=0
 max-public-methods=20
 max-bool-expr=5
-max-positional-args=6
+max-positional-arguments=6
 
 [CLASSES]
 defining-attr-methods=__init__,__new__,setUp
