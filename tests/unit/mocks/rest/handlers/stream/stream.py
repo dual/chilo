@@ -1,4 +1,3 @@
-from turtle import st
 from chilo_api.core.requirements import requirements
 
 
