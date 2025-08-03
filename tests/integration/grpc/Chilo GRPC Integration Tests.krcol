@@ -1,0 +1,11 @@
+{
+  "operations": [
+    "calculator/Calculator/Add.krop",
+    "calculator/Calculator/Divide.krop",
+    "calculator/Calculator/Multiply.krop",
+    "calculator/Calculator/Subtract.krop",
+    "messenger/Messenger/CheckStatus.krop",
+    "messenger/Messenger/SendMessage.krop",
+    "streamer/Streamer/Stream.krop"
+  ]
+}

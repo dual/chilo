@@ -1,3 +1,5 @@
+# Chilo
+
 <p align="center">
   <a href="https://chiloproject.io"><img src="https://raw.githubusercontent.com/dual/chilo-docs/main/img/logo-no-bg.png" alt="Chilo"></a>
 </p>
@@ -14,21 +16,22 @@
 [![Inline docs](https://inch-ci.org/github/dwyl/hapi-auth-jwt2.svg?branch=master)](https://chiloproject.io)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
 
-# Chilo
 Chilo, short for chilorhinophis (meaning two headed snake), is a lightweight, form-meets-function, opinionated (yet highly configurable) api framework.
 
 ## Benefits
+
 * No route definitions needed; route based on your directory structure
 * Built-in OpenAPI request and response validation
-* Ease of use with gunicorn
+* Built-in GRPC support
 * Generate OpenAPI spec from code base
+* Ease of use with gunicorn
 * Infinitely customizable with middleware extensions
 
 ## Philosophy
 
 The Chilo philosophy is to provide a dry, configurable, declarative framework, which encourages Happy Path Programming (HPP).
 
-Happy Path Programming is an idea in which inputs are all validated before operated on. This ensures code follows the happy path without the need for mid-level, nested exceptions and all the nasty exception handling that comes with that. The library uses layers of customizable middleware options to allow a developer to easily dictate what constitutes a valid input, without nested conditionals, try/catch blocks or other coding blocks which distract from the happy path which covers the majority of the source code's intended operation.
+Happy Path Programming is a development approach where all inputs are validated up front, allowing the main logic to proceed without interruption. This avoids deeply nested conditionals, scattered try/catch blocks, and the clutter of mid-flow exception handling. Chilo provides a flexible middleware system that lets developers define what counts as valid input—keeping the code focused, readable, and on the "happy path" where things work as expected.
 
 ## Documentation & Examples
 
@@ -36,9 +39,9 @@ Happy Path Programming is an idea in which inputs are all validated before opera
 * [Examples](https://github.com/dual/chilo-docs/tree/main/examples)
 * Tutorial (coming soon)
 
-## Quick Start
+## Quick Start (REST)
 
-#### 0. Install
+### 0. Install
 
 ```bash
 $ pip install chilo_api
@@ -46,7 +49,7 @@ $ pip install chilo_api
 # poetry add chilo_api
 ```
 
-#### 1. Create `main.py`
+### 1. Create `main.py` for REST
 
 ```python
 from chilo_api import Chilo
@@ -58,26 +61,29 @@ api = Chilo(
 )
 ```
 
-#### 2. Create First Handler
+### 2. Create First Handler
 
 `{PWD}/api/handlers/__init__.py`
+
 ```python
-def get(request, response):
+from chilo_api import Request, Response
+
+def get(request: Request, response:Response ) -> Response:
     response.body = {'hello': 'world'}
     return response
 ```
 
-#### 3. Run your API
+### 3. Run your API
 
 ```bash
 python -m chilo_api serve --api=main --reload=true
 ```
 
-#### 4. Checkout your API
+### 4. Checkout your API
 
 [http://127.0.0.1:3000/](http://127.0.0.1:3000/)
 
-#### 5. Validate Your Endpoint (optional)
+### 5. Validate Your Endpoint (optional)
 
 ```python
 from chilo_api import requirements
@@ -89,6 +95,53 @@ def get(request, response):
     return response
 ```
 
-#### 6. Checkout your API (again)
+### 6. Checkout your API (again)
 
 [http://127.0.0.1:3000/?greeting=developer](http://127.0.0.1:3000/?greeting=developer)
+
+## Quick Start (GRPC)
+
+### 1. Create `main.py` for GRPC
+
+```python
+from chilo_api import Chilo
+
+
+api = Chilo(
+    api_type='grpc',
+    handlers='tests/unit/mocks/grpc/handlers/valid',
+    protobufs='tests/unit/mocks/grpc/protobufs',
+    reflection=True,
+    port=50051
+)
+```
+
+#### 2. Create First GRPC Handlers
+
+`{PWD}/api/handlers/__init__.py`
+
+```python
+from chilo_api import requirements, Request, Response
+
+@requirements(
+    protobuf='calculator.proto',
+    service='Calculator',
+    rpc='Add'
+)
+def add(request: Request, response: Response) -> Response:
+    num1 = request.body.get('num1', 0)
+    num2 = request.body.get('num2', 0)
+    result = num1 + num2
+    response.body = {'result': result}
+    return response
+```
+
+### 3. Run your GRPC API
+
+```bash
+python -m chilo_api serve --api=main
+```
+
+### 4. Checkout your GRPC API
+
+[http://127.0.0.1:50051/](http://127.0.0.1:50051/)

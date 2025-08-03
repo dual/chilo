@@ -128,13 +128,14 @@ Dockerfile
 
 # IDE
 .idea
-.vscode
 
 #ruff
 .ruff_cache
 
 #test outputs
 tests/outputs
+tests/unit/mocks/grpc/protobufs/generated
 
 # symlink
-api.py
+api_rest.py
+api_grpc.py

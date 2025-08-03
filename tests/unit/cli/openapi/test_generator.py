@@ -2,7 +2,7 @@ import json
 import unittest
 import yaml
 
-from chilo_api.cli.openapi.handler.importer import HandlerImporter
+from chilo_api.cli.importer import CLIImporter
 from chilo_api.cli.openapi.generator import OpenAPIGenerator
 
 
@@ -44,38 +44,38 @@ class OpenAPIGeneratorTest(unittest.TestCase):
                 'schemas': {}
             }
         }
-        with open('tests/mocks/openapi/discoverable/existing/yaml/openapi.yml', encoding='utf-8') as schema_file:
+        with open('tests/unit/mocks/openapi/discoverable/existing/yaml/openapi.yml', encoding='utf-8') as schema_file:
             self.existing_expected_yml = yaml.load(schema_file, Loader=yaml.FullLoader)
-        with open('tests/mocks/openapi/discoverable/existing/json/openapi.json', encoding='utf-8') as schema_file:
+        with open('tests/unit/mocks/openapi/discoverable/existing/json/openapi.json', encoding='utf-8') as schema_file:
             self.existing_expected_json = yaml.load(schema_file, Loader=yaml.FullLoader)
-        with open('tests/mocks/openapi/discoverable/removed/openapi.yml', encoding='utf-8') as schema_file:
+        with open('tests/unit/mocks/openapi/discoverable/removed/openapi.yml', encoding='utf-8') as schema_file:
             self.removed_path_existing_expected_yml = yaml.load(schema_file, Loader=yaml.FullLoader)
 
     def test_add_path_and_method_existing_yml_file(self):
-        generator = OpenAPIGenerator('tests/mocks/openapi/discoverable/existing/yaml')
+        generator = OpenAPIGenerator('tests/unit/mocks/openapi/discoverable/existing/yaml')
         self.assertDictEqual(self.existing_expected_yml, generator.doc)
 
     def test_add_path_and_method_existing_json_file(self):
-        generator = OpenAPIGenerator('tests/mocks/openapi/discoverable/existing/json')
+        generator = OpenAPIGenerator('tests/unit/mocks/openapi/discoverable/existing/json')
         self.assertEqual(json.dumps(generator.doc), json.dumps(self.existing_expected_json))
 
     def test_removed_path_and_method_existing_yml_file(self):
-        importer = HandlerImporter()
-        generator = OpenAPIGenerator('tests/mocks/openapi/discoverable/removed')
-        module = importer.get_modules_from_file_paths(
-            ['tests/mocks/handlers/unit_tests/valid/basic.py'],
-            'tests/mocks/handlers/unit_tests/valid',
+        importer = CLIImporter()
+        generator = OpenAPIGenerator('tests/unit/mocks/openapi/discoverable/removed')
+        module = importer.get_handler_modules_from_file_paths(
+            ['tests/unit/mocks/rest/handlers/valid/basic.py'],
+            'tests/unit/mocks/rest/handlers/valid',
             'chilo/unit_test'
         )[0]
         generator.add_path_and_method(module)
         generator.doc
 
     def test_add_path_and_method_non_existing_file(self):
-        importer = HandlerImporter()
+        importer = CLIImporter()
         generator = OpenAPIGenerator('tests/non-existing')
-        module = importer.get_modules_from_file_paths(
-            ['tests/mocks/handlers/unit_tests/valid/basic.py'],
-            'tests/mocks/handlers/unit_tests/valid',
+        module = importer.get_handler_modules_from_file_paths(
+            ['tests/unit/mocks/rest/handlers/valid/basic.py'],
+            'tests/unit/mocks/rest/handlers/valid',
             'chilo/unit_test'
         )[0]
         generator.add_path_and_method(module)
