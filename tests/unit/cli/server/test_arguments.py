@@ -1,4 +1,3 @@
-from asyncio import protocols
 import unittest
 from chilo_api.cli.server.arguments import ServerArguments
 
