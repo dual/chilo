@@ -1,6 +1,6 @@
-from typing import Any, Callable, TypeVar, Optional
-from typing_extensions import Any, Unpack, Callable, List, Union, Dict
 from functools import wraps
+from typing import Any, Callable, Optional
+from typing_extensions import Unpack, List, Union, Dict
 
 from chilo_api import logger
 from chilo_api.core.types.logger_settings import LoggerSettings

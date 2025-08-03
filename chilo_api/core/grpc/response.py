@@ -34,6 +34,7 @@ class GRPCResponse(Response):
         Otherwise, it returns the gRPC response with the body data.
     '''
 
+    # pylint: disable=unused-private-member
     def __init__(self, **kwargs) -> None:
         super().__init__(wsgi=GRPCWSGIPlaceHolder(), environ={}, server_response={})  # Overwrite WSGI behavior for gRPC context NOSONAR
         self.__code: int = 200  # NOSONAR Overwrite WSGI behavior for gRPC context

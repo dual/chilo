@@ -63,7 +63,7 @@ class ResolverImporter:
     def get_handlers_file_tree(self) -> Dict[str, Any]:
         if not self.__handlers_tree:
             file_list: List[str] = self.get_file_list()
-            if not len(file_list):
+            if len(file_list) == 0:
                 raise RuntimeError(
                     f'no files found in handler path {self.__get_glob_pattern()}; please make sure all spelling and spacing are correct'
                 )

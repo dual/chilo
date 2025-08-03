@@ -30,7 +30,7 @@ class Response:
         the return body of the request in its original format
     server: any
         special return format for use by the server worker
-    
+
     Methods
     ----------
     set_error(key_path, message):
@@ -64,7 +64,7 @@ class Response:
     @property
     def mimetype(self) -> str:
         if 'Content-Type' in self.headers:
-            self.__mimetype = self.headers['Content-Type'].split(';')[0]
+            self.__mimetype = self.headers['Content-Type'].split(';')[0]  # pylint: disable=invalid-sequence-index
         return self.__mimetype
 
     @mimetype.setter

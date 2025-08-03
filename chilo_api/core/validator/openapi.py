@@ -1,5 +1,5 @@
-from collections.abc import Hashable, Mapping
-from typing import Dict, Any, List, Optional, Union
+from collections.abc import Mapping
+from typing import Dict, Any, List
 from types import ModuleType
 
 from openapi_spec_validator import validate as openapi_validate_spec

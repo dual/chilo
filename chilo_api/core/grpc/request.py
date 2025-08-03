@@ -18,6 +18,7 @@ class GRPCRequest(Request):
         The gRPC context for the request, used for metadata and other gRPC-specific features
     '''
 
+    # pylint: disable=unused-private-member
     def __init__(self, rpc_request, context) -> None:
         super().__init__(wsgi=GRPCWSGIPlaceHolder(), timeout=None)  # NOSONAR Overwrite WSGI behavior for gRPC context
         self.__wsgi = GRPCWSGIPlaceHolder()  # NOSONAR Overwrite WSGI behavior for gRPC context

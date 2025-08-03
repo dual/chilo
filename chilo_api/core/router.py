@@ -1,5 +1,5 @@
-from typing_extensions import Unpack
 from typing import Any, Callable, Iterator, Optional, Union
+from typing_extensions import Unpack
 
 from werkzeug.wrappers import Request as WSGIRequest, Response as WSGIResponse
 

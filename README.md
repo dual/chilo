@@ -101,7 +101,7 @@ def get(request, response):
 
 ## Quick Start (GRPC)
 
-### 1. Create `main.py` for GRPC
+### 1. Create `main_grpc.py` for GRPC
 
 ```python
 from chilo_api import Chilo
@@ -109,14 +109,38 @@ from chilo_api import Chilo
 
 api = Chilo(
     api_type='grpc',
-    handlers='tests/unit/mocks/grpc/handlers/valid',
-    protobufs='tests/unit/mocks/grpc/protobufs',
+    handlers='api/handlers',
+    protobufs='api/protobufs',
     reflection=True,
     port=50051
 )
 ```
 
-#### 2. Create First GRPC Handlers
+#### 2. Create Your Protobuff files
+
+```protobuf
+syntax = "proto3";
+
+package calculator;
+
+service Calculator {
+    rpc Add(CalcRequest) returns (CalcResponse);
+    rpc Subtract(CalcRequest) returns (CalcResponse);
+    rpc Multiply(CalcRequest) returns (CalcResponse);
+    rpc Divide(CalcRequest) returns (CalcResponse);
+}
+
+message CalcRequest {
+    double num1 = 1;
+    double num2 = 2;
+}
+
+message CalcResponse {
+    double result = 1;
+}
+```
+
+#### 3. Create First GRPC Handlers
 
 `{PWD}/api/handlers/__init__.py`
 
@@ -136,12 +160,12 @@ def add(request: Request, response: Response) -> Response:
     return response
 ```
 
-### 3. Run your GRPC API
+### 4. Run your GRPC API
 
 ```bash
-python -m chilo_api serve --api=main
+python -m chilo_api serve --api=main_grpc
 ```
 
-### 4. Checkout your GRPC API
+### 5. Checkout your GRPC API
 
 [http://127.0.0.1:50051/](http://127.0.0.1:50051/)

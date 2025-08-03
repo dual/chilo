@@ -50,13 +50,13 @@ class OpenAPIHandlerModule:
         The schema for the response body, typically in JSON Schema format
     '''
 
-    def __init__(self, handler_base: str, file_path: str, module: ModuleType, method: str, base: str) -> None:
-        self.__handler_base: str = handler_base
-        self.__file_path: str = file_path
-        self.__module: ModuleType = module
-        self.__method: str = method
-        self.__base_path: str = base.strip(os.sep)
-        self.__func: Any = getattr(module, method)
+    def __init__(self, **kwargs: Any) -> None:
+        self.__handler_base: str = kwargs.get('handler_base', '')
+        self.__file_path: str = kwargs.get('file_path', '')
+        self.__module: ModuleType = kwargs['module']
+        self.__method: str = kwargs.get('method', '')
+        self.__base_path: str = kwargs.get('base', '').strip(os.sep)
+        self.__func: Any = getattr(self.__module, self.__method, None)
         self.__requirements: Dict[str, Any] = getattr(self.__func, 'requirements', {})
         self.__route_path: str = ''
 
@@ -162,8 +162,8 @@ class OpenAPIHandlerModule:
         schema_body: Union[str, Dict[str, Any], Type[BaseModel], None] = self.__requirements.get(schema_key)
         if not schema_body or isinstance(schema_body, str):
             return None
-        elif isinstance(schema_body, dict):
+        if isinstance(schema_body, dict):
             return schema_body
-        elif isinstance(schema_body, type) and issubclass(schema_body, BaseModel):
+        if isinstance(schema_body, type) and issubclass(schema_body, BaseModel):
             return schema_body.model_json_schema()
         return None
