@@ -6,8 +6,8 @@ from pydantic import BaseModel, ValidationError
 
 from chilo_api.core.validator.openapi import OpenApiValidator
 from chilo_api.core.validator.schema import Schema
-from chilo_api.core.rest.request import Request
-from chilo_api.core.rest.response import Response
+from chilo_api.core.rest.request import RestRequest as Request
+from chilo_api.core.rest.response import RestResponse as Response
 
 
 class Validator:

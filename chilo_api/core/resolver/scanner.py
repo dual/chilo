@@ -3,7 +3,7 @@ from types import ModuleType
 
 from chilo_api.core.exception import ApiException
 from chilo_api.core.resolver.importer import ResolverImporter
-from chilo_api.core.rest.request import Request
+from chilo_api.core.rest.request import RestRequest as Request
 
 
 class ResolverScanner:
@@ -25,7 +25,7 @@ class ResolverScanner:
         A dictionary to store dynamic parts of the path, where keys are indices and values are the corresponding path segments.
     import_path: List[str]
         A list to store the import path of the resolved endpoint.
-    
+
     Methods
     ----------
     reset():

@@ -7,8 +7,8 @@ from tests.unit.mocks.rest.common.environment_builder import EnvironmentBuilder
 
 from chilo_api.core.rest.endpoint import Endpoint
 from chilo_api.core.resolver.importer import ResolverImporter
-from chilo_api.core.rest.request import Request
-from chilo_api.core.rest.response import Response
+from chilo_api.core.rest.request import RestRequest as Request
+from chilo_api.core.rest.response import RestResponse as Response
 from chilo_api.core.exception import ApiException
 
 

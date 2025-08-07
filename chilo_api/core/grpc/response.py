@@ -1,12 +1,11 @@
-from typing import Any, Callable, Type, Optional, Union
+from typing import Any, Callable, Type, Optional
 
 import grpc
 
-from chilo_api.core.rest.response import Response
-from chilo_api.core.grpc.wsgi import GRPCWSGIPlaceHolder
+from chilo_api.core.interfaces.response import ResponseInterface
 
 
-class GRPCResponse(Response):
+class GRPCResponse(ResponseInterface):
     '''
     A class to represent a gRPC response.
     Attributes
@@ -34,21 +33,10 @@ class GRPCResponse(Response):
         Otherwise, it returns the gRPC response with the body data.
     '''
 
-    # pylint: disable=unused-private-member
     def __init__(self, **kwargs) -> None:
-        super().__init__(wsgi=GRPCWSGIPlaceHolder(), environ={}, server_response={})  # Overwrite WSGI behavior for gRPC context NOSONAR
-        self.__code: int = 200  # NOSONAR Overwrite WSGI behavior for gRPC context
-        self.__cors: Optional[Union[bool, str]] = None  # NOSONAR Overwrite WSGI behavior for gRPC context
-        self.__compress: bool = False  # NOSONAR Overwrite WSGI behavior for gRPC context
-        self.__mimetype: str = ''  # NOSONAR Overwrite WSGI behavior for gRPC context
-        self.__server_response: dict = {}  # NOSONAR Overwrite WSGI behavior for gRPC context
-        self.__wsgi: GRPCWSGIPlaceHolder = GRPCWSGIPlaceHolder()  # NOSONAR Overwrite WSGI behavior for gRPC context
-        self.__environ: dict = {}  # NOSONAR Overwrite WSGI behavior for gRPC context
-        self.__headers: dict = {}  # NOSONAR Overwrite WSGI behavior for gRPC context
-        self.__body: Optional[Any] = None
+        super().__init__()
         self.__rpc_response: Type[Any] = kwargs['rpc_response']
-        self.__context: Optional[Any] = kwargs.get('context', None)
-        self.__has_errors: bool = False
+        self.__context: Optional[Any] = kwargs.get('context')
         self.__http_grpc_code_mapping: dict[int, grpc.StatusCode] = {
             200: grpc.StatusCode.OK,
             400: grpc.StatusCode.INVALID_ARGUMENT,
@@ -68,21 +56,21 @@ class GRPCResponse(Response):
 
     @property
     def body(self) -> Any:
-        return self.__body
+        return self._body
 
     @body.setter
     def body(self, body) -> None:
-        self.__body = body
+        self._body = body
 
     @property
     def code(self) -> int:
-        if self.__code == 200 and self.has_errors:
-            self.__code = 400
-        return self.__code
+        if self._code == 200 and self.has_errors:
+            self._code = 400
+        return self._code
 
     @code.setter
     def code(self, code: int) -> None:
-        self.__code = code
+        self._code = code
 
     @property
     def grpc_code(self) -> grpc.StatusCode:
@@ -98,15 +86,15 @@ class GRPCResponse(Response):
 
     @property
     def has_errors(self) -> bool:
-        return self.__has_errors
+        return self._has_errors
 
     @property
     def rpc_response(self) -> Callable[..., Any]:
         return self.__rpc_response
 
     def set_error(self, key_path: str, message: str) -> None:
-        self.__has_errors = True
-        self.__context.set_details(f'{key_path}: {message}')  # type: ignore
+        self._has_errors = True
+        self.context.set_details(f'{key_path}: {message}')
 
     def get_response(self) -> Any:
         self.context.set_code(self.grpc_code)

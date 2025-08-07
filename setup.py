@@ -6,7 +6,7 @@ with open('README.md', 'r') as fh:
 
 setup(
     name='chilo_api',
-    version=os.getenv('CIRCLE_TAG'),
+    version=os.getenv('CIRCLE_TAG', '0.1.0'),
     url='https://github.com/dual/chilo.git',
     author='Paul Cruse III',
     author_email='paulcruse3@gmail.com',

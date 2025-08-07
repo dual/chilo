@@ -1,5 +1,5 @@
 class GRPCWSGIPlaceHolder:
-    '''    A placeholder class for WSGI applications in a gRPC context. '''
+    ''' A placeholder class for WSGI applications in a gRPC context. '''
 
     def __getattr__(self, name: str) -> None:
         '''

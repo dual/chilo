@@ -1,8 +1,8 @@
 from werkzeug.test import EnvironBuilder
 from werkzeug.wrappers import Request as WSGIRequest, Response as WSGIResponse
 
-from chilo_api.core.rest.request import Request
-from chilo_api.core.rest.response import Response
+from chilo_api.core.rest.request import RestRequest as Request
+from chilo_api.core.rest.response import RestResponse as Response
 
 
 class EnvironmentBuilder:

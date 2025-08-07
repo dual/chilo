@@ -3,8 +3,8 @@ from types import ModuleType
 
 from chilo_api.core.exception import ApiException
 from chilo_api.core import logger
-from chilo_api.core.rest.request import Request
-from chilo_api.core.rest.response import Response
+from chilo_api.core.rest.request import RestRequest as Request
+from chilo_api.core.rest.response import RestResponse as Response
 
 
 class Endpoint:

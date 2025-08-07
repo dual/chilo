@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 from chilo_api.core.grpc.request import GRPCRequest
-from chilo_api.core.rest.request import Request
+from chilo_api.core.interfaces.request import RequestInterface
 
 
 class GRPCRequestTest(unittest.TestCase):
@@ -11,16 +11,19 @@ class GRPCRequestTest(unittest.TestCase):
         self.mock_rpc_request = Mock()
         self.mock_context = Mock()
 
+    def test_api_type(self):
+        grpc_request = GRPCRequest(self.mock_rpc_request, self.mock_context)
+        self.assertEqual('grpc', grpc_request.api_type)
+
     def test_grpc_request_initialization(self):
         grpc_request = GRPCRequest(self.mock_rpc_request, self.mock_context)
-        self.assertIsInstance(grpc_request, Request)
         self.assertEqual(grpc_request.raw, self.mock_rpc_request)
         self.assertEqual(grpc_request.context, self.mock_context)
 
     def test_grpc_request_inherits_from_request(self):
         grpc_request = GRPCRequest(self.mock_rpc_request, self.mock_context)
-        self.assertTrue(issubclass(GRPCRequest, Request))
-        self.assertIsInstance(grpc_request, Request)
+        self.assertTrue(issubclass(GRPCRequest, RequestInterface))
+        self.assertIsInstance(grpc_request, RequestInterface)
 
     @patch('chilo_api.core.grpc.request.MessageToDict')
     def test_body_property_successful_conversion(self, mock_message_to_dict):
@@ -29,6 +32,40 @@ class GRPCRequestTest(unittest.TestCase):
 
         grpc_request = GRPCRequest(self.mock_rpc_request, self.mock_context)
         result = grpc_request.body
+
+        mock_message_to_dict.assert_called_once_with(
+            self.mock_rpc_request,
+            preserving_proto_field_name=True
+        )
+        self.assertEqual(result, expected_dict)
+
+    @patch('chilo_api.core.grpc.request.MessageToDict')
+    def test_protobuf_property_successful_conversion(self, mock_message_to_dict):
+        expected_dict = {'user_id': 123, 'username': 'testuser', 'email': 'test@example.com'}
+        mock_message_to_dict.return_value = expected_dict
+
+        grpc_request = GRPCRequest(self.mock_rpc_request, self.mock_context)
+        result = grpc_request.protobuf
+
+        mock_message_to_dict.assert_called_once_with(
+            self.mock_rpc_request,
+            preserving_proto_field_name=True
+        )
+        self.assertEqual(result, expected_dict)
+
+    @patch('chilo_api.core.grpc.request.MessageToDict')
+    def test_json_property_successful_conversion(self, mock_message_to_dict):
+        expected_dict = {'user_id': 123, 'username': 'testuser', 'email': 'test@example.com'}
+        mock_message_to_dict.return_value = expected_dict
+
+        grpc_request = GRPCRequest(self.mock_rpc_request, self.mock_context)
+        result = grpc_request.json
+
+        mock_message_to_dict.assert_called_once_with(
+            self.mock_rpc_request,
+            preserving_proto_field_name=True
+        )
+        self.assertEqual(result, expected_dict)
 
         mock_message_to_dict.assert_called_once_with(
             self.mock_rpc_request,
@@ -114,16 +151,9 @@ class GRPCRequestTest(unittest.TestCase):
     def test_grpc_request_inheritance_chain(self):
         _ = GRPCRequest(self.mock_rpc_request, self.mock_context)
         mro = GRPCRequest.__mro__
-        self.assertIn(Request, mro)
+        self.assertIn(RequestInterface, mro)
         self.assertEqual(mro[0], GRPCRequest)
-        self.assertEqual(mro[1], Request)
-
-    @patch('chilo_api.core.grpc.request.GRPCWSGIPlaceHolder')
-    def test_grpc_request_wsgi_placeholder_usage(self, mock_wsgi_placeholder):
-        mock_placeholder_instance = Mock()
-        mock_wsgi_placeholder.return_value = mock_placeholder_instance
-        _ = GRPCRequest(self.mock_rpc_request, self.mock_context)
-        self.assertEqual(mock_wsgi_placeholder.call_count, 2)
+        self.assertEqual(mro[1], RequestInterface)
 
     def test_multiple_grpc_requests(self):
         requests = []
