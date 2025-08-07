@@ -5,7 +5,7 @@ from werkzeug.wrappers import Request as WSGIRequest, Response as WSGIResponse
 
 from chilo_api.core.validator.config import ConfigValidator
 from chilo_api.core.executor import Executor
-from chilo_api.core.rest.request import Request
+from chilo_api.core.rest.request import RestRequest as Request
 from chilo_api.core.rest.response import Response
 from chilo_api.core.resolver import Resolver
 from chilo_api.core.rest.pipeline import RestPipeline

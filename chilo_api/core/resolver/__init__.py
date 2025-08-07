@@ -5,7 +5,7 @@ from chilo_api.core.resolver.cache import ResolverCache
 from chilo_api.core.rest.endpoint import Endpoint
 from chilo_api.core.exception import ApiException
 from chilo_api.core.resolver.scanner import ResolverScanner
-from chilo_api.core.rest.request import Request
+from chilo_api.core.rest.request import RestRequest as Request
 
 
 class Resolver:

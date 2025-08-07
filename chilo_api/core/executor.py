@@ -9,7 +9,7 @@ from chilo_api.core.logger.common import CommonLogger
 from chilo_api.core.rest.json_helper import JsonHelper
 from chilo_api.core.rest.pipeline import RestPipeline
 from chilo_api.core.grpc.pipeline import GRPCPipeline
-from chilo_api.core.rest.request import Request
+from chilo_api.core.rest.request import RestRequest as Request
 from chilo_api.core.rest.response import Response
 from chilo_api.core.resolver import Resolver
 from chilo_api.core.types.router_settings import RouterSettings

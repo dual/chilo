@@ -6,14 +6,17 @@ import xmltodict
 
 from chilo_api.core import logger
 from chilo_api.core.rest.json_helper import JsonHelper
+from chilo_api.core.interfaces.request import RequestInterface
 
 
-class Request:
+class RestRequest(RequestInterface):
     '''
     A class to represent a api request
 
     Attributes
     ----------
+    api_type: str
+        The type of API, such as 'rest' or 'grpc'
     wsgi: Request
         An instance of the werkzeug Request (https://werkzeug.palletsprojects.com/en/3.0.x/wrappers/)
     authorization: dict
@@ -69,11 +72,10 @@ class Request:
     '''
 
     def __init__(self, **kwargs):
-        self.__wsgi = kwargs['wsgi']
+        super().__init__(**kwargs)
         self.__timeout = kwargs['timeout']
         self.__route = ''
         self.__path_params = {}
-        self.__context = {}
         self.__parsers = {
             'application/json': 'json',
             'application/graphql': 'graphql',
@@ -85,48 +87,52 @@ class Request:
         }
 
     @property
+    def api_type(self) -> str:
+        return 'rest'
+
+    @property
     def wsgi(self) -> Any:
-        return self.__wsgi
+        return self._wsgi
 
     @property
     def text(self) -> str:
-        return self.__wsgi.get_data(as_text=True)
+        return self._wsgi.get_data(as_text=True)
 
     @property
     def authorization(self) -> Any:
-        return self.__wsgi.authorization
+        return self._wsgi.authorization
 
     @property
     def cookies(self) -> dict:
-        return dict(self.__wsgi.cookies)
+        return dict(self._wsgi.cookies)
 
     @property
     def protocol(self) -> str:
-        return self.__wsgi.scheme
+        return self._wsgi.scheme
 
     @property
     def content_type(self) -> str:
-        return self.__wsgi.content_type
+        return self._wsgi.content_type
 
     @property
     def mimetype(self) -> str:
-        return self.__wsgi.mimetype
+        return self._wsgi.mimetype if self._wsgi.mimetype is not None else 'raw'
 
     @property
     def host_url(self) -> str:
-        return self.__wsgi.host_url
+        return self._wsgi.host_url
 
     @property
     def domain(self) -> str:
-        return urllib.parse.urlparse(self.__wsgi.host_url).netloc
+        return urllib.parse.urlparse(self._wsgi.host_url).netloc
 
     @property
     def method(self) -> str:
-        return self.__wsgi.method.lower()
+        return self._wsgi.method.lower()
 
     @property
     def path(self) -> str:
-        return self.__wsgi.path
+        return self._wsgi.path
 
     @property
     def route(self) -> str:
@@ -141,7 +147,7 @@ class Request:
 
     @property
     def headers(self) -> dict:
-        return {key.lower(): value for key, value in dict(self.__wsgi.headers).items()}
+        return {key.lower(): value for key, value in dict(self._wsgi.headers).items()}
 
     @property
     def body(self) -> Any:
@@ -158,7 +164,7 @@ class Request:
 
     @property
     def form(self) -> dict:
-        return dict(self.__wsgi.form)
+        return dict(self._wsgi.form)
 
     @property
     def xml(self) -> dict:
@@ -166,7 +172,7 @@ class Request:
 
     @property
     def files(self) -> dict:
-        return dict(self.__wsgi.files)
+        return dict(self._wsgi.files)
 
     @property
     def graphql(self) -> dict:
@@ -179,11 +185,11 @@ class Request:
 
     @property
     def raw(self) -> Any:
-        return self.__wsgi.get_data()
+        return self._wsgi.get_data()
 
     @property
     def query_params(self) -> dict:
-        return dict(self.__wsgi.args)
+        return dict(self._wsgi.args)
 
     @property
     def path_params(self) -> dict:
@@ -196,11 +202,11 @@ class Request:
 
     @property
     def context(self) -> Any:
-        return self.__context
+        return self._context
 
     @context.setter
     def context(self, context: Any):
-        self.__context = context
+        self._context = context
 
     @property
     def timeout(self) -> int:
