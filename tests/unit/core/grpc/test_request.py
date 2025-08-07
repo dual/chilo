@@ -53,12 +53,6 @@ class GRPCRequestTest(unittest.TestCase):
         )
         self.assertEqual(result, expected_dict)
 
-        mock_message_to_dict.assert_called_once_with(
-            self.mock_rpc_request,
-            preserving_proto_field_name=True
-        )
-        self.assertEqual(result, expected_dict)
-
     @patch('chilo_api.core.grpc.request.MessageToDict')
     def test_json_property_successful_conversion(self, mock_message_to_dict):
         expected_dict = {'user_id': 123, 'username': 'testuser', 'email': 'test@example.com'}
