@@ -70,6 +70,7 @@ class RestRequest(RequestInterface):
     __str__():
         Returns a string representation of the request object, useful for debugging and logging
     '''
+    DEFAULT_MIMETYPE = 'raw'
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -116,7 +117,7 @@ class RestRequest(RequestInterface):
 
     @property
     def mimetype(self) -> str:
-        return self._wsgi.mimetype if self._wsgi.mimetype is not None else 'raw'
+        return self._wsgi.mimetype if self._wsgi.mimetype is not None else self.DEFAULT_MIMETYPE
 
     @property
     def host_url(self) -> str:
