@@ -2,7 +2,7 @@ from functools import wraps
 from typing import Any, Callable, Optional
 from typing_extensions import Unpack, List, Union, Dict
 
-from chilo_api import logger
+from chilo_api.core import logger
 from chilo_api.core.types.logger_settings import LoggerSettings
 
 
