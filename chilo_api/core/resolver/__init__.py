@@ -5,7 +5,8 @@ from chilo_api.core.resolver.cache import ResolverCache
 from chilo_api.core.rest.endpoint import Endpoint
 from chilo_api.core.exception import ApiException
 from chilo_api.core.resolver.scanner import ResolverScanner
-from chilo_api.core.rest.request import RestRequest as Request
+from chilo_api.core.rest.request import RestRequest
+from chilo_api.core.grpc.request import GRPCRequest
 
 
 class Resolver:
@@ -46,7 +47,7 @@ class Resolver:
     def reset(self) -> None:
         self.__scanner.reset()
 
-    def get_endpoint(self, request: Request) -> Endpoint:
+    def get_endpoint(self, request: Any) -> Endpoint:
         endpoint_module: ModuleType = self.__get_endpoint_module(request)
         if not hasattr(endpoint_module, request.method) and request.method not in {'options', 'head'}:
             raise ApiException(code=403, message='method not allowed')
@@ -57,7 +58,7 @@ class Resolver:
         self.reset()
         return endpoint
 
-    def __get_endpoint_module(self, request: Request) -> ModuleType:
+    def __get_endpoint_module(self, request: Any) -> ModuleType:
         cached: Dict[str, Any] = self.__cacher.get(request.path)
         endpoint = cached.get('endpoint')
         self.__scanner.has_dynamic_route = cached.get('is_dynamic_route', self.__scanner.has_dynamic_route)
@@ -69,7 +70,7 @@ class Resolver:
             raise ApiException(code=500, message='Endpoint module is not a valid python module')  # pragma: no cover
         return endpoint
 
-    def __assign_normalized_route(self, request: Request, endpoint: Endpoint) -> None:
+    def __assign_normalized_route(self, request: Any, endpoint: Endpoint) -> None:
         base_path_parts: list[str] = self.__scanner.base_path.split('/')
         dirty_route_parts: list[str] = endpoint.required_route.split('/') if endpoint.has_required_route else request.path.split('/')
         route_parts: list[str] = [part for part in dirty_route_parts if part]
@@ -77,7 +78,7 @@ class Resolver:
         final_route: list[str] = list(dict.fromkeys(combined_route))
         request.route = '/'.join(final_route)
 
-    def __check_dynamic_route_and_apply_params(self, request: Request, endpoint: Endpoint) -> None:
+    def __check_dynamic_route_and_apply_params(self, request: Any, endpoint: Endpoint) -> None:
         if not self.__scanner.has_dynamic_route:
             return
         if not endpoint.has_required_route:
@@ -87,12 +88,12 @@ class Resolver:
         self.__check_dynamic_route(request, clean_request_path, clean_endpoint_route)
         self.__apply_dynamic_route_params(request, clean_endpoint_route)
 
-    def __check_dynamic_route(self, request: Request, clean_request_path: list[str], clean_endpoint_route: list[str]) -> None:
+    def __check_dynamic_route(self, request: Any, clean_request_path: list[str], clean_endpoint_route: list[str]) -> None:
         for index, _ in enumerate(clean_request_path):
             if clean_request_path[index] != clean_endpoint_route[index] and index not in list(self.__scanner.dynamic_parts.keys()):
                 self.__raise_404_error(request.path, 'no route found; requested dynamic route does not match endpoint route definition')
 
-    def __apply_dynamic_route_params(self, request: Request, required_route_parts: list[str]) -> None:
+    def __apply_dynamic_route_params(self, request: Any, required_route_parts: list[str]) -> None:
         for part in self.__scanner.dynamic_parts.keys():
             variable_name: str = required_route_parts[part]
             if not variable_name.startswith('{') or not variable_name.endswith('}'):

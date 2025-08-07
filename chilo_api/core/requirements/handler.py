@@ -5,7 +5,7 @@ import signal
 
 from chilo_api.core.exception import ApiTimeOutException
 from chilo_api.core.rest.request import RestRequest as Request
-from chilo_api.core.rest.response import Response
+from chilo_api.core.rest.response import RestResponse as Response
 
 
 class RequirementsHandler:

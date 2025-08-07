@@ -4,9 +4,10 @@ from io import BytesIO
 from typing import Dict, Any, Union, Tuple, List, Optional
 
 from chilo_api.core.rest.json_helper import JsonHelper
+from chilo_api.core.interfaces.response import ResponseInterface
 
 
-class Response:
+class RestResponse(ResponseInterface):
     '''
     A class to represent an API response
 
@@ -38,15 +39,14 @@ class Response:
     '''
 
     def __init__(self, **kwargs: Any) -> None:
-        self.__code: int = 200
+        super().__init__()
+        self.__wsgi = kwargs['wsgi']
+        self.__environ = kwargs['environ']
+        self.__server_response = kwargs['server_response']
         self.__cors: Optional[Union[bool, str]] = kwargs.get('cors')
         self.__compress: bool = False
         self.__mimetype: str = 'application/json'
-        self.__server_response: Any = kwargs['server_response']
-        self.__wsgi: Any = kwargs['wsgi']
-        self.__environ: Any = kwargs['environ']
         self.__headers: Dict[str, str] = {}
-        self.__body: Optional[Union[Dict[str, Any], List[Any], Tuple[Any, ...], str]] = None
 
     @property
     def headers(self) -> Dict[str, str]:
@@ -89,36 +89,36 @@ class Response:
 
     @property
     def code(self) -> int:
-        if self.__body is None and self.__code == 200:
-            self.__code = 204
-        elif isinstance(self.__body, dict) and self.__code == 200 and self.has_errors:
-            self.__code = 400
-        return self.__code
+        if self._body is None and self._code == 200:
+            self._code = 204
+        elif isinstance(self._body, dict) and self._code == 200 and self.has_errors:
+            self._code = 400
+        return self._code
 
     @code.setter
     def code(self, code: int) -> None:
-        self.__code = code
+        self._code = code
 
     @property
     def has_errors(self) -> bool:
-        return 'errors' in self.__body if isinstance(self.__body, dict) else False
+        return 'errors' in self._body if isinstance(self._body, dict) else False
 
     @property
     def body(self) -> Optional[Union[str, bytes]]:
         if self.compress:
-            encoded_body = JsonHelper.encode(self.__body, raise_error=True)
+            encoded_body = JsonHelper.encode(self._body, raise_error=True)
             return self.__compress_body(str(encoded_body))
-        if isinstance(self.__body, (dict, list, tuple)):
-            return JsonHelper.encode(self.__body, raise_error=True)
-        return self.__body
+        if isinstance(self._body, (dict, list, tuple)):
+            return JsonHelper.encode(self._body, raise_error=True)
+        return self._body
 
     @body.setter
     def body(self, body: Union[Dict[str, Any], List[Any], Tuple[Any, ...], str, None]) -> None:
-        self.__body = body
+        self._body = body
 
     @property
     def raw(self) -> Optional[Union[Dict[str, Any], List[Any], Tuple[Any, ...], str]]:
-        return self.__body
+        return self._body
 
     def get_response(self) -> Any:
         response = self.__wsgi(self.body, headers=self.headers, mimetype=self.mimetype, status=self.code)
@@ -126,10 +126,10 @@ class Response:
 
     def set_error(self, key_path: str, message: str) -> None:
         error: Dict[str, str] = {'key_path': key_path, 'message': message}
-        if isinstance(self.__body, dict) and 'errors' in self.__body:
-            self.__body['errors'].append(error)
+        if isinstance(self._body, dict) and 'errors' in self._body:
+            self._body['errors'].append(error)
         else:
-            self.__body = {'errors': [error]}
+            self._body = {'errors': [error]}
 
     def __compress_body(self, body: str) -> str:
         self.headers = ('Content-Encoding', 'gzip')

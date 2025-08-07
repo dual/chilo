@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 import grpc
 
 from chilo_api.core.grpc.response import GRPCResponse
-from chilo_api.core.rest.response import Response
+from chilo_api.core.interfaces.response import ResponseInterface
 
 
 class GRPCResponseTest(unittest.TestCase):
@@ -15,7 +15,7 @@ class GRPCResponseTest(unittest.TestCase):
     def test_grpc_response_initialization(self):
         grpc_response = GRPCResponse(rpc_response=self.mock_rpc_response, context=self.mock_context)
 
-        self.assertIsInstance(grpc_response, Response)
+        self.assertIsInstance(grpc_response, ResponseInterface)
         self.assertEqual(grpc_response.rpc_response, self.mock_rpc_response)
         self.assertEqual(grpc_response.context, self.mock_context)
         self.assertIsNone(grpc_response.body)
@@ -24,8 +24,8 @@ class GRPCResponseTest(unittest.TestCase):
 
     def test_grpc_response_inherits_from_response(self):
         grpc_response = GRPCResponse(rpc_response=self.mock_rpc_response)
-        self.assertTrue(issubclass(GRPCResponse, Response))
-        self.assertIsInstance(grpc_response, Response)
+        self.assertTrue(issubclass(GRPCResponse, ResponseInterface))
+        self.assertIsInstance(grpc_response, ResponseInterface)
 
     def test_initialization_without_context(self):
         grpc_response = GRPCResponse(rpc_response=self.mock_rpc_response)
@@ -221,15 +221,6 @@ class GRPCResponseTest(unittest.TestCase):
         self.assertEqual(grpc_response.rpc_response, self.mock_rpc_response)
         self.assertEqual(grpc_response.context, self.mock_context)
 
-    @patch('chilo_api.core.grpc.response.GRPCWSGIPlaceHolder')
-    def test_grpc_wsgi_placeholder_usage(self, mock_wsgi_placeholder):
-        mock_placeholder_instance = Mock()
-        mock_wsgi_placeholder.return_value = mock_placeholder_instance
-
-        _ = GRPCResponse(rpc_response=self.mock_rpc_response)
-
-        self.assertEqual(mock_wsgi_placeholder.call_count, 2)
-
     def test_body_with_complex_data_structures(self):
         grpc_response = GRPCResponse(rpc_response=self.mock_rpc_response)
 
@@ -260,6 +251,6 @@ class GRPCResponseTest(unittest.TestCase):
         _ = GRPCResponse(rpc_response=self.mock_rpc_response)
 
         mro = GRPCResponse.__mro__
-        self.assertIn(Response, mro)
+        self.assertIn(ResponseInterface, mro)
         self.assertEqual(mro[0], GRPCResponse)
-        self.assertEqual(mro[1], Response)
+        self.assertEqual(mro[1], ResponseInterface)
