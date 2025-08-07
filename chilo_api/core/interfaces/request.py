@@ -1,7 +1,7 @@
 import abc
 from typing import Any
 
-from chilo_api.core.interfaces.wsgi import GRPCWSGIPlaceHolder
+from chilo_api.core.placeholders.wsgi import GRPCWSGIPlaceHolder
 
 
 class RequestInterface(abc.ABC):

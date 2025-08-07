@@ -7,7 +7,7 @@ from chilo_api.core.grpc.endpoint import GRPCEndpoint
 from chilo_api.core.grpc.request import GRPCRequest
 from chilo_api.core.grpc.response import GRPCResponse
 from chilo_api.core.grpc.pipeline import GRPCPipeline
-from chilo_api.core.grpc.resolver import ResolverPlaceholder
+from chilo_api.core.placeholders.resolver import ResolverPlaceholder
 from chilo_api.core.executor import Executor
 from chilo_api.core.router import Router
 

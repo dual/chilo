@@ -3,7 +3,7 @@ from typing import Any, Callable, Type, Optional, Union
 import grpc
 
 from chilo_api.core.rest.response import Response
-from chilo_api.core.interfaces.wsgi import GRPCWSGIPlaceHolder
+from chilo_api.core.placeholders.wsgi import GRPCWSGIPlaceHolder
 
 
 class GRPCResponse(Response):
