@@ -1,8 +1,6 @@
 import abc
 from typing import Any, Optional
 
-from chilo_api.core.placeholders.grpc import GRPCContextPlaceHolder
-
 
 class ResponseInterface(abc.ABC):
     '''

@@ -11,6 +11,10 @@ class GRPCRequestTest(unittest.TestCase):
         self.mock_rpc_request = Mock()
         self.mock_context = Mock()
 
+    def test_api_type(self):
+        grpc_request = GRPCRequest(self.mock_rpc_request, self.mock_context)
+        self.assertEqual('grpc', grpc_request.api_type)
+
     def test_grpc_request_initialization(self):
         grpc_request = GRPCRequest(self.mock_rpc_request, self.mock_context)
         self.assertEqual(grpc_request.raw, self.mock_rpc_request)
@@ -28,6 +32,46 @@ class GRPCRequestTest(unittest.TestCase):
 
         grpc_request = GRPCRequest(self.mock_rpc_request, self.mock_context)
         result = grpc_request.body
+
+        mock_message_to_dict.assert_called_once_with(
+            self.mock_rpc_request,
+            preserving_proto_field_name=True
+        )
+        self.assertEqual(result, expected_dict)
+
+    @patch('chilo_api.core.grpc.request.MessageToDict')
+    def test_protobuf_property_successful_conversion(self, mock_message_to_dict):
+        expected_dict = {'user_id': 123, 'username': 'testuser', 'email': 'test@example.com'}
+        mock_message_to_dict.return_value = expected_dict
+
+        grpc_request = GRPCRequest(self.mock_rpc_request, self.mock_context)
+        result = grpc_request.protobuf
+
+        mock_message_to_dict.assert_called_once_with(
+            self.mock_rpc_request,
+            preserving_proto_field_name=True
+        )
+        self.assertEqual(result, expected_dict)
+
+        mock_message_to_dict.assert_called_once_with(
+            self.mock_rpc_request,
+            preserving_proto_field_name=True
+        )
+        self.assertEqual(result, expected_dict)
+
+    @patch('chilo_api.core.grpc.request.MessageToDict')
+    def test_json_property_successful_conversion(self, mock_message_to_dict):
+        expected_dict = {'user_id': 123, 'username': 'testuser', 'email': 'test@example.com'}
+        mock_message_to_dict.return_value = expected_dict
+
+        grpc_request = GRPCRequest(self.mock_rpc_request, self.mock_context)
+        result = grpc_request.json
+
+        mock_message_to_dict.assert_called_once_with(
+            self.mock_rpc_request,
+            preserving_proto_field_name=True
+        )
+        self.assertEqual(result, expected_dict)
 
         mock_message_to_dict.assert_called_once_with(
             self.mock_rpc_request,

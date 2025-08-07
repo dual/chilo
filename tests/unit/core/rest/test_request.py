@@ -13,6 +13,10 @@ class RequestTest(unittest.TestCase):
     def test_wsgi(self):
         request = self.environ.get_request()
         self.assertIsInstance(request.wsgi, self.environ.mock_request_class)
+    
+    def test_api_type(self):
+        request = self.environ.get_request()
+        self.assertEqual('rest', request.api_type)
 
     def test_authorization(self):
         auth = {'Authorization': 'Bearer 123456789'}
