@@ -39,13 +39,16 @@ class GRPCRequest(RequestInterface):
     def raw(self) -> Any:
         return self.__rpc_request
 
+    def _as_dict(self) -> Any:
+        return MessageToDict(self.__rpc_request, preserving_proto_field_name=True)
+
     @property
     def json(self) -> Any:
-        return self.protobuf
+        return self._as_dict()
 
     @property
     def protobuf(self) -> Any:
-        return MessageToDict(self.__rpc_request, preserving_proto_field_name=True)
+        return self._as_dict()
 
     @property
     def context(self) -> Any:
