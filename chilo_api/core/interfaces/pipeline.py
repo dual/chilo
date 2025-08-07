@@ -75,13 +75,13 @@ class PipelineInterface(abc.ABC):
     @abc.abstractmethod
     def steps(self) -> List[Dict[str, Union[Callable[[Any, Any, Any], None], bool]]]:
         '''Return the steps in the pipeline.'''
-        pass
+        raise NotImplementedError
 
     @property
     @abc.abstractmethod
     def stream_steps(self) -> List[Dict[str, Union[Callable[[Any, Any, Any], None], bool]]]:
         '''Return the steps for streaming requests.'''
-        pass
+        raise NotImplementedError
 
     @property
     def should_run_endpoint(self) -> bool:

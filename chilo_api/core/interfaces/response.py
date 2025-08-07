@@ -18,32 +18,32 @@ class ResponseInterface(abc.ABC):
     @property
     @abc.abstractmethod
     def body(self) -> Any:
-        pass
+        raise NotImplementedError
 
     @body.setter
     @abc.abstractmethod
     def body(self, body: Any) -> None:
-        pass
+        raise NotImplementedError
 
     @property
     @abc.abstractmethod
     def code(self) -> int:
-        pass
+        raise NotImplementedError
 
     @code.setter
     @abc.abstractmethod
     def code(self, code: int) -> None:
-        pass
+        raise NotImplementedError
 
     @property
     @abc.abstractmethod
     def has_errors(self) -> bool:
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def set_error(self, key_path: str, message: str) -> None:
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def get_response(self) -> Any:
-        pass
+        raise NotImplementedError

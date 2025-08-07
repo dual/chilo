@@ -17,29 +17,29 @@ class RequestInterface(abc.ABC):
     @property
     @abc.abstractmethod
     def api_type(self) -> str:
-        pass
+        raise NotImplementedError
 
     @property
     @abc.abstractmethod
     def body(self) -> Any:
-        pass
+        raise NotImplementedError
 
     @property
     @abc.abstractmethod
     def json(self) -> Any:
-        pass
+        raise NotImplementedError
 
     @property
     @abc.abstractmethod
     def raw(self) -> Any:
-        pass
+        raise NotImplementedError
 
     @property
     @abc.abstractmethod
     def context(self) -> Any:
-        pass
+        raise NotImplementedError
 
     @context.setter
     @abc.abstractmethod
     def context(self, context: Any) -> None:
-        pass
+        raise NotImplementedError
