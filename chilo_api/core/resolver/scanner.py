@@ -44,6 +44,7 @@ class ResolverScanner:
         self.dynamic_parts: Dict[int, str] = {}
         self.import_path: List[str] = []
         self.__handler_pattern: str = kwargs['handlers']
+        self.__init_file = '__init__.py'
 
     def reset(self) -> None:
         self.has_dynamic_route = False
@@ -100,7 +101,7 @@ class ResolverScanner:
     def __get_possible_directory_and_file(self, route_part: str, file_pattern: str) -> Tuple[str, str]:
         possible_directory: str = f'{route_part}'
         possible_file: str = file_pattern.replace('*', route_part) if '*' in file_pattern else f'{possible_directory}.py'
-        possible_file = '__init__.py' if possible_file == '.py' else possible_file
+        possible_file = self.__init_file if possible_file == '.py' else possible_file
         return possible_directory, possible_file
 
     def __handle_directory_path_part(self, possible_directory: str, split_path: List[str], split_index: int, file_tree: Dict[str, Any], file_pattern: str) -> None:
@@ -109,7 +110,7 @@ class ResolverScanner:
             file_leaf: Dict[str, Any] = self.__determine_which_file_leaf(file_tree, possible_directory)
             self.__get_import_path_file_tree(split_path, split_index+1, file_leaf, file_pattern)
         else:
-            index_file: str = file_pattern.replace('*', possible_directory) if '*' in file_pattern else '__init__.py'
+            index_file: str = file_pattern.replace('*', possible_directory) if '*' in file_pattern else self.__init_file
             self.__append_import_path(index_file)
 
     def __handle_file_path_part(self, possible_file: str, split_path: List[str], split_index: int, file_tree: Dict[str, Any], file_pattern: str) -> None:
@@ -121,7 +122,7 @@ class ResolverScanner:
         file_part: str = list(file_tree['__dynamic_files'])[0]
         self.__append_import_path(file_part)
         if '.py' not in file_part and split_index+1 == len(split_path):  # pragma: no cover
-            index_file: str = file_pattern.replace('*', file_part) if '*' in file_pattern else '__init__.py'
+            index_file: str = file_pattern.replace('*', file_part) if '*' in file_pattern else self.__init_file
             self.__append_import_path(index_file)
         file_leaf: Dict[str, Any] = self.__determine_which_file_leaf(file_tree, file_part)
         self.has_dynamic_route = True
