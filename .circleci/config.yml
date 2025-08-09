@@ -3,15 +3,22 @@ orbs:
     python: circleci/python@3.2.0
     sonarcloud: sonarsource/sonarcloud@3.0.0
 commands:
+    install-kreyac-cli:
+        steps:
+            - run: wget https://stable-downloads.kreya.app/1.17.0/kreyac-linux-x64.tar.gz
+            - run: tar -xvzf kreyac-linux-x64.tar.gz
     install-postman-cli:
         steps:
             - run: curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
     postman-test-api:
         steps:
             - run: postman collection run tests/integration/rest/chilo.postman_collection.json --environment tests/integration/rest/chilo.postman_environment.json --bail failure --verbose
+    kreyac-test-grpc:
+        steps:
+            - run: ./kreyac -p ./tests/integration/grpc/Chilo.krproj collection invoke "Chilo GRPC Integration Tests"
     setup-artifacts:
         steps:
-            - run: mkdir ./coverage && mkdir ./coverage/lint && mkdir ./coverage/reports && mkdir ./coverage/pretty && mkdir ./coverage/typing || exit 0
+            - run: mkdir ./coverage && mkdir ./coverage/grpc && mkdir ./coverage/lint && mkdir ./coverage/reports && mkdir ./coverage/pretty && mkdir ./coverage/typing || exit 0
     setup-mock-unit-test-api:
         steps:
             - run: ln -s tests/unit/mocks/rest/api.py api_rest.py
@@ -22,6 +29,15 @@ commands:
     setup-mock-rest-integration-openapi-api:
         steps:
             - run: ln -s tests/integration/mocks/rest/openapi_api.py api_rest.py
+    setup-mock-grpc-integration-api:
+        steps:
+            - run: ln -s tests/unit/mocks/grpc/api.py api_grpc.py
+    run-grpc:
+        steps:
+            - run: 
+                name: Run the grpc api
+                background: true
+                command: pipenv run grpc
     run-api:
         steps:
             - run: 
@@ -141,6 +157,17 @@ jobs:
             - run-gunicorn
             - sleep
             - postman-test-api
+    integration-test-grpc:
+        docker:
+            - image: cimg/python:3.9.17
+        steps:
+            - attach_workspace:
+                at: ~/project
+            - install-kreyac-cli
+            - setup-mock-grpc-integration-api
+            - run-grpc
+            - sleep
+            - kreyac-test-grpc
     install-build-deploy:
         docker:
             - image: cimg/python:3.9.17
@@ -182,10 +209,6 @@ workflows:
             - integration-test-gunicorn:
                 requires:
                     - install-build
-
-# Commmand to run Kreya CLI
-# wget https://stable-downloads.kreya.app/1.17.0/kreyac-linux-x64.tar.gz
-# tar -xvzf kreyac-linux-x64.tar.gz
-# ./kreyac
-# openssl genrsa -out server.key 2048
-# openssl req -new -x509 -sha256 -key server.key -out server.crt -days 365
+            - integration-test-grpc:
+                requires:
+                    - install-build

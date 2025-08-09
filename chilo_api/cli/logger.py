@@ -63,8 +63,10 @@ class CLILogger:  # pragma: no cover
             self.log_message(f'OPENAPI RESPONSE VALIDATION: {"Enabled" if server.openapi_validate_response else "Disabled"}')
         if server.api_type == 'grpc':
             self.log_message(f'PROTOBUF PATH: {server.protobufs}')
-            statsu = 'Enabled' if server.enable_reflection else 'Disabled'
-            self.log_message(f'REFLECTION: {statsu} (from {server.source.get("enable_reflection", "default")})')
+            status = 'Enabled' if server.enable_reflection else 'Disabled'
+            self.log_message(f'REFLECTION: {status} (from {server.source.get("enable_reflection", "default")})')
+            secured = 'Enabled' if server.private_key and server.certificate else 'Disabled'
+            self.log_message(f'SECURED PORT: {secured}')
         self.log_subheader_message('--------')
 
     def log_end(self, message: Optional[str] = None) -> None:

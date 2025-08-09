@@ -144,3 +144,4 @@ api_grpc_secured.py
 # ignore tls files
 *.crt
 *.key
+*.pem
