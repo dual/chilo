@@ -139,3 +139,7 @@ tests/unit/mocks/grpc/protobufs/generated
 # symlink
 api_rest.py
 api_grpc.py
+
+# ignore tls files
+*.crt
+*.key
