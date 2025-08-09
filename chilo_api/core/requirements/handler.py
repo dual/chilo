@@ -73,7 +73,7 @@ class RequirementsHandler:
 
     def __run_start_functions(self, request: Request, response: Response) -> None:
         self.run_before(request, response)
-        self.start_timeout(request.timeout)
+        self.start_timeout(request.timeout if request.api_type == 'rest' else None)
 
     def __wrap_function(self, function: Callable[[Any, Any], Any]) -> Callable[[Request, Response], Response]:
         @functools.wraps(function)
