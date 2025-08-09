@@ -133,7 +133,7 @@ class Router:
         self.__output_error: bool = kwargs.get('output_error', False)
         self.__openapi_validate_request: bool = kwargs.get('openapi_validate_request', False)
         self.__openapi_validate_response: bool = kwargs.get('openapi_validate_response', False)
-        self.__enable_reflection: bool = kwargs.get('enable_reflection', kwargs.get('reflection', False))
+        self.__enable_reflection: bool = kwargs.get('reflection', False)
         self.__private_key: Optional[str] = kwargs.get('private_key')
         self.__certificate: Optional[str] = kwargs.get('certificate')
         self.__executor: Executor = Executor(RestPipeline(**kwargs), Resolver(**kwargs), **kwargs)
