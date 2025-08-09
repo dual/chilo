@@ -31,7 +31,7 @@ commands:
             - run: ln -s tests/integration/mocks/rest/openapi_api.py api_rest.py
     setup-mock-grpc-integration-api:
         steps:
-            - run: ln -s tests/unit/mocks/grpc/api.py api_grpc.py
+            - run: ln -s tests/integration/mocks/grpc/api.py api_grpc.py
     run-grpc:
         steps:
             - run: 

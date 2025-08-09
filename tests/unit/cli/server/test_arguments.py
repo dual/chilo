@@ -22,9 +22,10 @@ class MockApi:
     protobufs = 'tests/unit/mocks/grpc/protobufs'
     openapi_validate_request = False
     openapi_validate_response = False
-    enable_reflection = True
+    reflection = True
     private_key = None
     certificate = None
+    max_workers = 10
 
 
 class ArgumentsTest(unittest.TestCase):
@@ -44,6 +45,7 @@ class ArgumentsTest(unittest.TestCase):
         self.assertEqual(server_args.timeout, mock_api.timeout)
         self.assertEqual(server_args.openapi_validate_request, mock_api.openapi_validate_request)
         self.assertEqual(server_args.openapi_validate_response, mock_api.openapi_validate_response)
-        self.assertEqual(server_args.enable_reflection, mock_api.enable_reflection)
+        self.assertEqual(server_args.reflection, mock_api.reflection)
         self.assertEqual(server_args.private_key, mock_api.private_key)
         self.assertEqual(server_args.certificate, mock_api.certificate)
+        self.assertEqual(server_args.max_workers, mock_api.max_workers)

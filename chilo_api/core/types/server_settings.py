@@ -15,6 +15,7 @@ class ServerSettings(Protocol):
     protobufs: Union[str, None]
     handlers: str
     api_config: Any
-    enable_reflection: bool
+    reflection: bool
     private_key: Union[str, None]
     certificate: Union[str, None]
+    max_workers: Union[int, None]

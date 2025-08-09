@@ -14,9 +14,10 @@ class MockArgs:
     handlers = 'tests/unit/mocks/grpc/handlers/valid'
     protobufs = 'tests/unit/mocks/grpc/protobufs'
     api_config = Mock(spec=Router)
-    enable_reflection = True
+    reflection = True
     private_key = None
     certificate = None
+    max_workers = 10
 
 
 class GRPCServerTest(TestCase):
@@ -27,9 +28,10 @@ class GRPCServerTest(TestCase):
         self.mock_server_args.port = 50051
         self.mock_server_args.protobufs = 'test/protobufs'
         self.mock_server_args.api_config = Mock(spec=Router)
-        self.mock_server_args.enable_reflection = True
+        self.mock_server_args.reflection = True
         self.mock_server_args.private_key = None
         self.mock_server_args.certificate = None
+        self.mock_server_args.max_workers = 10
         self.mock_logger = Mock(spec=CLILogger)
         self.grpc_server = GRPCServer(self.mock_server_args, self.mock_logger)
 
@@ -313,7 +315,7 @@ class GRPCServerTest(TestCase):
         mock_grpc_server.return_value = mock_server
 
         # Ensure reflection is enabled
-        self.mock_server_args.enable_reflection = True
+        self.mock_server_args.reflection = True
 
         with patch.object(self.grpc_server, '_GRPCServer__get_endpoints_from_server', return_value=[]):
             with patch.object(self.grpc_server, '_GRPCServer__generate_grpc_code_from_endpoints'):
@@ -333,7 +335,7 @@ class GRPCServerTest(TestCase):
         mock_grpc_server.return_value = mock_server
 
         # Disable reflection
-        self.mock_server_args.enable_reflection = False
+        self.mock_server_args.reflection = False
 
         with patch.object(self.grpc_server, '_GRPCServer__get_endpoints_from_server', return_value=[]):
             with patch.object(self.grpc_server, '_GRPCServer__generate_grpc_code_from_endpoints'):

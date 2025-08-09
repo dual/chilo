@@ -44,6 +44,12 @@ class CLIManager:
             choices=['generate-openapi', 'serve']
         )
         parser.add_argument(
+            '-m',
+            '--max-workers',
+            help='(optional) maximum number of worker threads for the server; default: 10',
+            required=False
+        )
+        parser.add_argument(
             '-a',
             '--api',
             help='api file to run',

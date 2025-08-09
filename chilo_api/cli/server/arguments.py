@@ -32,12 +32,14 @@ class ServerArguments:
         The type of API (e.g., REST, gRPC).
     api_config: Any
         The API configuration object containing additional settings.
-    enable_reflection: bool
+    reflection: bool
         Whether to enable server reflection for gRPC services.
     private_key: Optional[str]
         The path to the private key file for secure connections.
     certificate: Optional[str]
         The path to the certificate file for secure connections.
+    max_workers: Optional[int]
+        The maximum number of worker threads for the server.
     Methods
     ----------
     route(environ, server_response):
@@ -57,9 +59,10 @@ class ServerArguments:
         self.__verbose: bool = self.__get_setting('verbose', args, api)
         self.__openapi_validate_request: bool = api.openapi_validate_request
         self.__openapi_validate_response: bool = api.openapi_validate_response
-        self.__enable_reflection: bool = self.__get_setting('enable_reflection', args, api)
+        self.__reflection: bool = self.__get_setting('reflection', args, api)
         self.__private_key: Union[str, None] = self.__get_setting('private_key', args, api)
         self.__certificate: Union[str, None] = self.__get_setting('certificate', args, api)
+        self.__max_workers: Union[int, None] = self.__get_setting('max_workers', args, api)
 
     @property
     def host(self) -> str:
@@ -110,8 +113,8 @@ class ServerArguments:
         return self.__api_config
 
     @property
-    def enable_reflection(self) -> bool:
-        return self.__enable_reflection
+    def reflection(self) -> bool:
+        return self.__reflection
 
     @property
     def private_key(self) -> Union[str, None]:
@@ -120,6 +123,10 @@ class ServerArguments:
     @property
     def certificate(self) -> Union[str, None]:
         return self.__certificate
+
+    @property
+    def max_workers(self) -> Union[int, None]:
+        return self.__max_workers
 
     def __get_setting(self, key: str, args: ServerSettings, api: Router) -> Any:
         arg_value = getattr(args, key, None)

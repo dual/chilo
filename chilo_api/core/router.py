@@ -1,4 +1,4 @@
-from typing import Any, Callable, Iterator, Optional, Union
+from typing import Any, Callable, Iterator, Optional, Union, cast
 from typing_extensions import Unpack
 
 from werkzeug.wrappers import Request as WSGIRequest, Response as WSGIResponse
@@ -44,7 +44,7 @@ class Router:
         type of api (ex. rest, grpc)
     cors: bool or str
         determines if cors is enabled; can be a boolean or a string with allowed origins
-    enable_reflection: bool
+    reflection: bool
         whether to enable server reflection for gRPC services
     before_all: Optional[Callable[[Any, Any, Any], None]]
         function to run before all requests
@@ -107,7 +107,7 @@ class Router:
             determines if api should validate request against spece openapi spec (default is False)
         openapi_validate_response: bool, optional
             determines if api should validate response against spece openapi spec (default is False)
-        enable_reflection: bool, optional
+        reflection: bool, optional
             whether to enable server reflection for gRPC services (default is False)
         private_key: str, optional
             the path to the private key file for secure connections (default is None)
@@ -133,9 +133,10 @@ class Router:
         self.__output_error: bool = kwargs.get('output_error', False)
         self.__openapi_validate_request: bool = kwargs.get('openapi_validate_request', False)
         self.__openapi_validate_response: bool = kwargs.get('openapi_validate_response', False)
-        self.__enable_reflection: bool = kwargs.get('reflection', False)
+        self.__reflection: bool = kwargs.get('reflection', False)
         self.__private_key: Optional[str] = kwargs.get('private_key')
         self.__certificate: Optional[str] = kwargs.get('certificate')
+        self.__max_workers: Optional[int] = cast(Optional[int], kwargs.get('max_workers', 10))
         self.__executor: Executor = Executor(RestPipeline(**kwargs), Resolver(**kwargs), **kwargs)
 
     @property
@@ -211,8 +212,8 @@ class Router:
         return self.__cors
 
     @property
-    def enable_reflection(self) -> bool:
-        return self.__api_type == 'grpc' and self.__enable_reflection
+    def reflection(self) -> bool:
+        return self.__api_type == 'grpc' and self.__reflection
 
     @property
     def private_key(self) -> Optional[str]:
@@ -221,6 +222,10 @@ class Router:
     @property
     def certificate(self) -> Optional[str]:
         return self.__certificate
+
+    @property
+    def max_workers(self) -> Optional[int]:
+        return self.__max_workers
 
     def route(self, environ, server_response) -> Union[WSGIResponse, Iterator[bytes]]:
         request: Request = Request(wsgi=WSGIRequest(environ), timeout=self.__timeout)

@@ -39,7 +39,7 @@ class GRPCServer:
         self.logger = logger
 
     def run(self) -> None:
-        server: grpc.Server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+        server: grpc.Server = grpc.server(futures.ThreadPoolExecutor(max_workers=self.server_args.max_workers))
         endpoints: List[GRPCEndpoint] = self.__get_endpoints_from_server()
         self.__generate_grpc_code_from_endpoints(endpoints)
         self.__pair_generated_code_to_endpoints(endpoints)
@@ -178,7 +178,7 @@ class GRPCServer:
         return list(unique_services.values())
 
     def __enable_server_reflection(self, server: grpc.Server) -> None:
-        if not self.server_args.enable_reflection:
+        if not self.server_args.reflection:
             return  # pragma: no cover
         service_names = self.__get_service_names_for_reflection()
         if service_names:

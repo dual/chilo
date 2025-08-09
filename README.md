@@ -7,14 +7,14 @@
     <em>Chilo is a lightweight, form-meets-function, opinionated (yet highly configurable) api framework</em>
 </p>
 
-[![CircleCI](https://circleci.com/gh/dual/chilo.svg?style=shield)](https://circleci.com/gh/syngenta/acai-python)
+[![CircleCI](https://circleci.com/gh/dual/chilo.svg?style=shield)](https://circleci.com/gh/dual/chilo)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dual_chilo&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=dual_chilo)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=dual_chilo&metric=coverage)](https://sonarcloud.io/summary/new_code?id=dual_chilo)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=dual_chilo&metric=bugs)](https://sonarcloud.io/summary/new_code?id=dual_chilo)
 [![pypi package](https://img.shields.io/pypi/v/chilo-api?color=%2334D058&label=pypi%20package)](https://pypi.org/project/chilo-api/)
 [![python](https://img.shields.io/pypi/pyversions/chilo-api.svg?color=%2334D058)](https://pypi.org/project/chilo-api)
 [![Inline docs](https://inch-ci.org/github/dwyl/hapi-auth-jwt2.svg?branch=master)](https://chiloproject.io)
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dual/chilo/issues)
 
 Chilo, short for chilorhinophis (meaning two headed snake), is a lightweight, form-meets-function, opinionated (yet highly configurable) api framework.
 

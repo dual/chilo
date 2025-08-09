@@ -93,6 +93,10 @@ class RouterTest(unittest.TestCase):
         chilo = Chilo(base_path='/', handlers='tests/unit/mocks/rest/handlers/valid')
         self.assertFalse(chilo.cors)
 
+    def test_max_workers_default(self):
+        chilo = Chilo(base_path='/', handlers='tests/unit/mocks/rest/handlers/valid')
+        self.assertEqual(chilo.max_workers, 10)
+
     def test_route_passes(self):
         body = self.__get_chilo_response_body(path='/basic', method='patch')
         self.assertDictEqual({'router_directory_basic': 'PATCH'}, body)
