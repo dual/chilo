@@ -23,6 +23,8 @@ class MockApi:
     openapi_validate_request = False
     openapi_validate_response = False
     enable_reflection = True
+    private_key = None
+    certificate = None
 
 
 class ArgumentsTest(unittest.TestCase):

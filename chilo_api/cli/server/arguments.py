@@ -34,6 +34,10 @@ class ServerArguments:
         The API configuration object containing additional settings.
     enable_reflection: bool
         Whether to enable server reflection for gRPC services.
+    private_key: Optional[str]
+        The path to the private key file for secure connections.
+    certificate: Optional[str]
+        The path to the certificate file for secure connections.
     Methods
     ----------
     route(environ, server_response):
@@ -42,18 +46,20 @@ class ServerArguments:
 
     def __init__(self, args: ServerSettings, api: Router) -> None:
         self.__source: Dict[str, str] = {}
-        self.__host: str = self.__get_setting('host', args, api)
-        self.__port: int = self.__get_setting('port', args, api)
-        self.__reload: bool = self.__get_setting('reload', args, api)
-        self.__verbose: bool = self.__get_setting('verbose', args, api)
+        self.__api_config: Router = api
         self.__api_type: str = api.api_type
         self.__timeout: Optional[Union[int, float]] = api.timeout
         self.__handlers: str = api.handlers
         self.__protobufs: Optional[str] = api.protobufs
+        self.__host: str = self.__get_setting('host', args, api)
+        self.__port: int = self.__get_setting('port', args, api)
+        self.__reload: bool = self.__get_setting('reload', args, api)
+        self.__verbose: bool = self.__get_setting('verbose', args, api)
         self.__openapi_validate_request: bool = api.openapi_validate_request
         self.__openapi_validate_response: bool = api.openapi_validate_response
-        self.__api_config: Router = api
         self.__enable_reflection: bool = self.__get_setting('enable_reflection', args, api)
+        self.__private_key: Union[str, None] = self.__get_setting('private_key', args, api)
+        self.__certificate: Union[str, None] = self.__get_setting('certificate', args, api)
 
     @property
     def host(self) -> str:
@@ -106,6 +112,14 @@ class ServerArguments:
     @property
     def enable_reflection(self) -> bool:
         return self.__enable_reflection
+
+    @property
+    def private_key(self) -> Union[str, None]:
+        return self.__private_key
+
+    @property
+    def certificate(self) -> Union[str, None]:
+        return self.__certificate
 
     def __get_setting(self, key: str, args: ServerSettings, api: Router) -> Any:
         arg_value = getattr(args, key, None)

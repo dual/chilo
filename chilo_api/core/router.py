@@ -36,6 +36,28 @@ class Router:
         determines if api should validate request against spece openapi spec
     openapi_validate_response: bool
         determines if api should validate response against spece openapi spec
+    private_key: Optional[str]
+        the path to the private key file for secure connections
+    certificate: Optional[str]
+        the path to the certificate file for secure connections
+    api_type: str
+        type of api (ex. rest, grpc)
+    cors: bool or str
+        determines if cors is enabled; can be a boolean or a string with allowed origins
+    enable_reflection: bool
+        whether to enable server reflection for gRPC services
+    before_all: Optional[Callable[[Any, Any, Any], None]]
+        function to run before all requests
+    after_all: Optional[Callable[[Any, Any, Any], None]]
+        function to run after all requests; if not errors were detected
+    when_auth_required: Optional[Callable[[Any, Any, Any], None]]
+        function to run when `auth_required` is true on the endpoint requirements dectorator
+    on_error: Optional[Callable[[Any, Any, Any], None]]
+        function to run when 500 level is raised
+    on_timeout: Optional[Callable[[Any, Any, Any], None]]
+        function to run when timeout error is raised
+    protobufs: Optional[str]
+        glob pattern location of where the protobufs are located
 
     Methods
     ----------
@@ -85,6 +107,12 @@ class Router:
             determines if api should validate request against spece openapi spec (default is False)
         openapi_validate_response: bool, optional
             determines if api should validate response against spece openapi spec (default is False)
+        enable_reflection: bool, optional
+            whether to enable server reflection for gRPC services (default is False)
+        private_key: str, optional
+            the path to the private key file for secure connections (default is None)
+        certificate: str, optional
+            the path to the certificate file for secure connections (default is None)
         '''
         ConfigValidator.validate(**kwargs)
         self.__handlers: str = kwargs['handlers']
@@ -106,6 +134,8 @@ class Router:
         self.__openapi_validate_request: bool = kwargs.get('openapi_validate_request', False)
         self.__openapi_validate_response: bool = kwargs.get('openapi_validate_response', False)
         self.__enable_reflection: bool = kwargs.get('reflection', False)
+        self.__private_key: Union[str, None] = kwargs.get('private_key', None)
+        self.__certificate: Union[str, None] = kwargs.get('certificate', None)
         self.__executor: Executor = Executor(RestPipeline(**kwargs), Resolver(**kwargs), **kwargs)
 
     @property
@@ -183,6 +213,14 @@ class Router:
     @property
     def enable_reflection(self) -> bool:
         return self.__api_type == 'grpc' and self.__enable_reflection
+
+    @property
+    def private_key(self) -> Union[str, None]:
+        return self.__private_key
+
+    @property
+    def certificate(self) -> Union[str, None]:
+        return self.__certificate
 
     def route(self, environ, server_response) -> Union[WSGIResponse, Iterator[bytes]]:
         request: Request = Request(wsgi=WSGIRequest(environ), timeout=self.__timeout)
