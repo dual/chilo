@@ -16,3 +16,5 @@ class ServerSettings(Protocol):
     handlers: str
     api_config: Any
     enable_reflection: bool
+    private_key: Union[str, None]
+    certificate: Union[str, None]

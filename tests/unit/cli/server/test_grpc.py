@@ -1,5 +1,5 @@
 from unittest import mock, TestCase
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, mock_open
 
 from chilo_api.cli.server.grpc import GRPCServer
 from chilo_api.core.types.server_settings import ServerSettings
@@ -15,6 +15,8 @@ class MockArgs:
     protobufs = 'tests/unit/mocks/grpc/protobufs'
     api_config = Mock(spec=Router)
     enable_reflection = True
+    private_key = None
+    certificate = None
 
 
 class GRPCServerTest(TestCase):
@@ -26,6 +28,8 @@ class GRPCServerTest(TestCase):
         self.mock_server_args.protobufs = 'test/protobufs'
         self.mock_server_args.api_config = Mock(spec=Router)
         self.mock_server_args.enable_reflection = True
+        self.mock_server_args.private_key = None
+        self.mock_server_args.certificate = None
         self.mock_logger = Mock(spec=CLILogger)
         self.grpc_server = GRPCServer(self.mock_server_args, self.mock_logger)
 
@@ -143,12 +147,9 @@ class GRPCServerTest(TestCase):
                     with patch.object(self.grpc_server, '_GRPCServer__assign_grpc_classes_to_endpoints'):
                         with patch.object(self.grpc_server, '_GRPCServer__assign_grpc_server_methods'):
                             with patch.object(self.grpc_server, '_GRPCServer__add_to_server'):
-
-                                self.grpc_server.run()
-
-        mock_server.add_insecure_port.assert_called_once_with(f'[::]:{self.mock_server_args.port}')
-        mock_server.stop.assert_called_once_with(grace=0)
-        self.mock_logger.log_message.assert_called_once_with(f'An error occurred while running the gRPC server: {port_exception}')
+                                with self.assertRaises(Exception) as context:
+                                    self.grpc_server.run()
+                                self.assertEqual(str(context.exception), str(port_exception))
 
     @patch('grpc.server')
     def test_wait_for_termination_exception(self, mock_grpc_server):
@@ -225,3 +226,141 @@ class GRPCServerTest(TestCase):
 
                 expected_log_message = f'An error occurred while running the gRPC server: {expected_message}'
                 self.mock_logger.log_message.assert_called_once_with(expected_log_message)
+
+    @patch('builtins.open', new_callable=mock_open)
+    @patch('chilo_api.cli.server.grpc.grpc.ssl_server_credentials')
+    @patch('grpc.server')
+    def test_add_secure_port_with_tls_credentials(self, mock_grpc_server, mock_ssl_credentials, mock_file_open):
+        mock_server = Mock()
+        mock_grpc_server.return_value = mock_server
+        mock_credentials = Mock()
+        mock_ssl_credentials.return_value = mock_credentials
+
+        # Set up TLS credentials
+        self.mock_server_args.private_key = '/path/to/key.pem'
+        self.mock_server_args.certificate = '/path/to/cert.pem'
+
+        mock_file_open.side_effect = [
+            mock_open(read_data=b'private_key_data').return_value,
+            mock_open(read_data=b'certificate_data').return_value
+        ]
+
+        with patch.object(self.grpc_server, '_GRPCServer__get_endpoints_from_server', return_value=[]):
+            with patch.object(self.grpc_server, '_GRPCServer__generate_grpc_code_from_endpoints'):
+                with patch.object(self.grpc_server, '_GRPCServer__pair_generated_code_to_endpoints'):
+                    with patch.object(self.grpc_server, '_GRPCServer__assign_grpc_classes_to_endpoints'):
+                        with patch.object(self.grpc_server, '_GRPCServer__assign_grpc_server_methods'):
+                            with patch.object(self.grpc_server, '_GRPCServer__add_to_server'):
+                                self.grpc_server.run()
+
+        # Verify TLS setup
+        mock_ssl_credentials.assert_called_once_with([(b'private_key_data', b'certificate_data')])
+        mock_server.add_secure_port.assert_called_once_with(f'[::]:{self.mock_server_args.port}', mock_credentials)
+        mock_server.add_insecure_port.assert_not_called()
+
+    @patch('builtins.open', side_effect=FileNotFoundError("Private key file not found"))
+    @patch('grpc.server')
+    def test_add_secure_port_with_missing_private_key_file(self, mock_grpc_server, mock_file_open):
+        mock_server = Mock()
+        mock_grpc_server.return_value = mock_server
+
+        # Set up TLS credentials with missing file
+        self.mock_server_args.private_key = '/path/to/missing_key.pem'
+        self.mock_server_args.certificate = '/path/to/cert.pem'
+
+        with patch.object(self.grpc_server, '_GRPCServer__get_endpoints_from_server', return_value=[]):
+            with patch.object(self.grpc_server, '_GRPCServer__generate_grpc_code_from_endpoints'):
+                with patch.object(self.grpc_server, '_GRPCServer__pair_generated_code_to_endpoints'):
+                    with patch.object(self.grpc_server, '_GRPCServer__assign_grpc_classes_to_endpoints'):
+                        with patch.object(self.grpc_server, '_GRPCServer__assign_grpc_server_methods'):
+                            with patch.object(self.grpc_server, '_GRPCServer__add_to_server'):
+                                with self.assertRaises(FileNotFoundError) as context:
+                                    self.grpc_server.run()
+                                self.assertEqual(str(context.exception), "Private key file not found")
+
+    @patch('chilo_api.cli.server.grpc.grpc.ssl_server_credentials')
+    @patch('grpc.server')
+    def test_add_secure_port_with_missing_certificate_file(self, mock_grpc_server, mock_ssl_credentials):
+        mock_server = Mock()
+        mock_grpc_server.return_value = mock_server
+
+        # Set up TLS credentials
+        self.mock_server_args.private_key = '/path/to/key.pem'
+        self.mock_server_args.certificate = '/path/to/cert.pem'
+
+        # Use context managers to patch both file operations
+        with patch('builtins.open', mock_open(read_data=b'private_key_data')) as mock_file:
+            # Configure the mock to succeed on first call, fail on second
+            mock_file.side_effect = [
+                mock_open(read_data=b'private_key_data').return_value,
+                FileNotFoundError("Certificate file not found")
+            ]
+
+            with patch.object(self.grpc_server, '_GRPCServer__get_endpoints_from_server', return_value=[]):
+                with patch.object(self.grpc_server, '_GRPCServer__generate_grpc_code_from_endpoints'):
+                    with patch.object(self.grpc_server, '_GRPCServer__pair_generated_code_to_endpoints'):
+                        with patch.object(self.grpc_server, '_GRPCServer__assign_grpc_classes_to_endpoints'):
+                            with patch.object(self.grpc_server, '_GRPCServer__assign_grpc_server_methods'):
+                                with patch.object(self.grpc_server, '_GRPCServer__add_to_server'):
+                                    with self.assertRaises(FileNotFoundError) as context:
+                                        self.grpc_server.run()
+                                    self.assertEqual(str(context.exception), "Certificate file not found")
+
+    @patch('chilo_api.cli.server.grpc.reflection.enable_server_reflection')
+    @patch('grpc.server')
+    def test_server_reflection_enabled_when_configured(self, mock_grpc_server, mock_enable_reflection):
+        mock_server = Mock()
+        mock_grpc_server.return_value = mock_server
+
+        # Ensure reflection is enabled
+        self.mock_server_args.enable_reflection = True
+
+        with patch.object(self.grpc_server, '_GRPCServer__get_endpoints_from_server', return_value=[]):
+            with patch.object(self.grpc_server, '_GRPCServer__generate_grpc_code_from_endpoints'):
+                with patch.object(self.grpc_server, '_GRPCServer__pair_generated_code_to_endpoints'):
+                    with patch.object(self.grpc_server, '_GRPCServer__assign_grpc_classes_to_endpoints'):
+                        with patch.object(self.grpc_server, '_GRPCServer__assign_grpc_server_methods'):
+                            with patch.object(self.grpc_server, '_GRPCServer__add_to_server'):
+                                with patch.object(self.grpc_server, '_GRPCServer__get_service_names_for_reflection', return_value=('test.Service', 'grpc.reflection.v1alpha.ServerReflection')):
+                                    self.grpc_server.run()
+
+        mock_enable_reflection.assert_called_once_with(('test.Service', 'grpc.reflection.v1alpha.ServerReflection'), mock_server)
+
+    @patch('chilo_api.cli.server.grpc.reflection.enable_server_reflection')
+    @patch('grpc.server')
+    def test_server_reflection_disabled_when_configured(self, mock_grpc_server, mock_enable_reflection):
+        mock_server = Mock()
+        mock_grpc_server.return_value = mock_server
+
+        # Disable reflection
+        self.mock_server_args.enable_reflection = False
+
+        with patch.object(self.grpc_server, '_GRPCServer__get_endpoints_from_server', return_value=[]):
+            with patch.object(self.grpc_server, '_GRPCServer__generate_grpc_code_from_endpoints'):
+                with patch.object(self.grpc_server, '_GRPCServer__pair_generated_code_to_endpoints'):
+                    with patch.object(self.grpc_server, '_GRPCServer__assign_grpc_classes_to_endpoints'):
+                        with patch.object(self.grpc_server, '_GRPCServer__assign_grpc_server_methods'):
+                            with patch.object(self.grpc_server, '_GRPCServer__add_to_server'):
+                                self.grpc_server.run()
+
+        mock_enable_reflection.assert_not_called()
+
+    def test_tls_configuration_validation(self):
+        self.mock_server_args.private_key = '/path/to/key.pem'
+        self.mock_server_args.certificate = None
+
+        with patch('grpc.server') as mock_grpc_server:
+            mock_server = Mock()
+            mock_grpc_server.return_value = mock_server
+
+            with patch.object(self.grpc_server, '_GRPCServer__get_endpoints_from_server', return_value=[]):
+                with patch.object(self.grpc_server, '_GRPCServer__generate_grpc_code_from_endpoints'):
+                    with patch.object(self.grpc_server, '_GRPCServer__pair_generated_code_to_endpoints'):
+                        with patch.object(self.grpc_server, '_GRPCServer__assign_grpc_classes_to_endpoints'):
+                            with patch.object(self.grpc_server, '_GRPCServer__assign_grpc_server_methods'):
+                                with patch.object(self.grpc_server, '_GRPCServer__add_to_server'):
+                                    self.grpc_server.run()
+
+            # Should fall back to insecure port
+            mock_server.add_insecure_port.assert_called_once_with(f'[::]:{self.mock_server_args.port}')
+            mock_server.add_secure_port.assert_not_called()

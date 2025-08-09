@@ -187,3 +187,5 @@ workflows:
 # wget https://stable-downloads.kreya.app/1.17.0/kreyac-linux-x64.tar.gz
 # tar -xvzf kreyac-linux-x64.tar.gz
 # ./kreyac
+# openssl genrsa -out server.key 2048
+# openssl req -new -x509 -sha256 -key server.key -out server.crt -days 365

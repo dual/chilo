@@ -28,3 +28,5 @@ class RouterSettings(TypedDict, total=False):
     grpc_endpoint: NotRequired[Any]
     default_error_message: NotRequired[str]
     reflection: NotRequired[bool]
+    private_key: NotRequired[str]
+    certificate: NotRequired[str]

@@ -47,6 +47,7 @@ class GRPCServer:
         self.__assign_grpc_server_methods(endpoints)
         self.__add_to_server(server, endpoints)
         self.__enable_server_reflection(server)
+        self.__add_port_to_server(server)
         self.__run_server(server)
 
     def __get_endpoints_from_server(self) -> List[GRPCEndpoint]:
@@ -183,9 +184,19 @@ class GRPCServer:
         if service_names:
             reflection.enable_server_reflection(service_names, server)
 
+    def __add_port_to_server(self, server: grpc.Server) -> None:
+        if self.server_args.private_key is not None and self.server_args.certificate is not None:
+            with open(self.server_args.private_key, 'rb') as server_key_file:
+                private_key = server_key_file.read()
+            with open(self.server_args.certificate, 'rb') as server_cert_file:
+                certificate = server_cert_file.read()
+            server_credentials = grpc.ssl_server_credentials([(private_key, certificate)])
+            server.add_secure_port(f'[::]:{self.server_args.port}', server_credentials)
+        else:
+            server.add_insecure_port(f'[::]:{self.server_args.port}')
+
     def __run_server(self, server: grpc.Server) -> None:
         try:
-            server.add_insecure_port(f'[::]:{self.server_args.port}')
             server.start()
             server.wait_for_termination()
         except KeyboardInterrupt:

@@ -37,14 +37,14 @@ pytest = "*"
 pytest-html = "*"
 pytest-cov = "*"
 
-
 [scripts]
-qt = "python -m unittest tests/unit/core/test_router.py"
-lint = "pylint --fail-under 9 chilo_api"
+qt = "python -m unittest tests/unit/cli/server/test_grpc.py"
+lint = "pylint --fail-under 10 chilo_api"
 test = "python -m unittest discover"
 coverage = "coverage run --source chilo_api/ -m pytest tests/unit --cov=chilo_api --junitxml ./coverage/reports/junit.xml --cov-report xml:./coverage/reports/cov.xml --html=./coverage/reports/index.html --self-contained-html --cov-report html:./coverage/pretty -p no:warnings -o log_cli=true"
 rest = "python -m chilo_api serve --api=api_rest --reload=true"
 grpc = "python -m chilo_api serve --api=api_grpc --reload=true"
+grpc_secured = "python -m chilo_api serve --api=api_grpc_secured --reload=true"
 openapi = "python -m chilo_api generate-openapi --api=api_rest --output=tests/outputs --format=yml,json --delete"
 gunicorn = "gunicorn 'chilo_api.gunicorn:run(api=\"api_rest.py\")' --workers=1 --bind=127.0.0.1:3000"
 mypy-report = "mypy --html-report ./coverage/typing chilo_api/"

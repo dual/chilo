@@ -23,6 +23,8 @@ class MockApi:
     openapi_validate_request = False
     openapi_validate_response = False
     enable_reflection = True
+    private_key = None
+    certificate = None
 
 
 class ArgumentsTest(unittest.TestCase):
@@ -35,3 +37,13 @@ class ArgumentsTest(unittest.TestCase):
         self.assertEqual(server_args.protobufs, mock_api.protobufs)
         self.assertEqual(server_args.api_type, mock_api.api_type)
         self.assertIsInstance(server_args.api_config, MockApi)
+        self.assertEqual(server_args.host, mock_api.host)
+        self.assertEqual(server_args.port, mock_api.port)
+        self.assertEqual(server_args.reload, mock_api.reload)
+        self.assertEqual(server_args.verbose, mock_api.verbose)
+        self.assertEqual(server_args.timeout, mock_api.timeout)
+        self.assertEqual(server_args.openapi_validate_request, mock_api.openapi_validate_request)
+        self.assertEqual(server_args.openapi_validate_response, mock_api.openapi_validate_response)
+        self.assertEqual(server_args.enable_reflection, mock_api.enable_reflection)
+        self.assertEqual(server_args.private_key, mock_api.private_key)
+        self.assertEqual(server_args.certificate, mock_api.certificate)
