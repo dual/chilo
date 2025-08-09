@@ -30,4 +30,3 @@ class RouterSettings(TypedDict, total=False):
     reflection: NotRequired[bool]
     private_key: NotRequired[str]
     certificate: NotRequired[str]
-    enable_reflection: NotRequired[bool]
