@@ -134,8 +134,8 @@ class Router:
         self.__openapi_validate_request: bool = kwargs.get('openapi_validate_request', False)
         self.__openapi_validate_response: bool = kwargs.get('openapi_validate_response', False)
         self.__enable_reflection: bool = kwargs.get('reflection', False)
-        self.__private_key: Union[str, None] = kwargs.get('private_key', None)
-        self.__certificate: Union[str, None] = kwargs.get('certificate', None)
+        self.__private_key: Optional[Union[str, None]] = kwargs.get('private_key', None)
+        self.__certificate: Optional[Union[str, None]] = kwargs.get('certificate', None)
         self.__executor: Executor = Executor(RestPipeline(**kwargs), Resolver(**kwargs), **kwargs)
 
     @property
