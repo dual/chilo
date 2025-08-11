@@ -3,7 +3,9 @@ syntax = "proto3";
 package streamer;
 
 service Streamer {
-  rpc Stream(stream StreamRequest) returns (stream StreamResponse);
+  rpc BiStream(stream StreamRequest) returns (stream StreamResponse);
+  rpc ClientStream(stream StreamRequest) returns (StreamResponse);
+  rpc ServerStream(StreamRequest) returns (stream StreamResponse);
 }
 
 message StreamRequest {

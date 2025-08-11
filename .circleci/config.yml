@@ -65,7 +65,7 @@ commands:
             - run: echo -e "[pypi]" >> ~/.pypirc
             - run: echo -e "username = __token__" >> ~/.pypirc
             - run: echo -e "password = $PYPI_TOKEN" >> ~/.pypirc
-    pypi-deploy:
+    pypi-publish:
         steps:
             - run: python3 -m pip install --user --upgrade setuptools wheel
             - run: python3 setup.py sdist bdist_wheel
@@ -168,7 +168,7 @@ jobs:
             - run-grpc
             - sleep
             - kreyac-test-grpc
-    install-build-deploy:
+    install-build-publish:
         docker:
             - image: cimg/python:3.9.17
         steps:
@@ -176,11 +176,11 @@ jobs:
             - python/install-packages:
                 pkg-manager: pipenv
             - pypi-setup
-            - pypi-deploy
+            - pypi-publish
 workflows:
-    install-build-deploy-workflow:
+    install-build-publish-workflow:
         jobs:
-            - install-build-deploy:
+            - install-build-publish:
                 filters:
                     tags:
                         only: /.*/

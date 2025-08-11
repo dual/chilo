@@ -5,7 +5,8 @@
     "calculator/Calculator/Multiply.krop",
     "calculator/Calculator/Subtract.krop",
     "messenger/Messenger/CheckStatus.krop",
-    "messenger/Messenger/SendMessage.krop",
-    "streamer/Streamer/Stream.krop"
+    "streamer/Streamer/BiStream.krop",
+    "streamer/Streamer/ClientStream.krop",
+    "streamer/Streamer/ServerStream.krop"
   ]
 }

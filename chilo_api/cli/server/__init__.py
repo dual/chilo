@@ -36,4 +36,4 @@ class Server:
             GRPCServer(server_args, self.logger).run()  # type: ignore
         else:
             run_simple(server_args.host, server_args.port, api.route, use_reloader=server_args.reload, use_debugger=server_args.verbose)
-        self.logger.log_end()
+        self.logger.log_end('SERVER SHUTTING DOWN')

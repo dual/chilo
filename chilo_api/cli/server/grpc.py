@@ -77,7 +77,7 @@ class GRPCServer:
             servicer_file_name: str = self.__get_servicer_file_name_from_proto(parsed.statements)  # type: ignore
             protobufs_path: str = self.server_args.protobufs if self.server_args.protobufs is not None else ''
             servicer_class: Optional[Type[Any]] = self.importer.get_imported_servicer_class(protobufs_path, servicer_file_name)
-            response_is_stream: bool = self.__determine_if_stream(parsed.statements)
+            response_is_stream: bool = self.__determine_if_stream(parsed.statements, endpoint)  # type: ignore
             if servicer_class is not None and servicer_class.__name__ == endpoint.servicer_class_name:
                 endpoint.response_is_stream = response_is_stream
                 endpoint.servicer = servicer_class
@@ -93,19 +93,26 @@ class GRPCServer:
                 return statement.identifier[0]
         return None  # pragma: no cover
 
-    def __determine_if_stream(self, statements: List[Any]) -> bool:
+    def __determine_if_stream(self, statements: List[Any], endpoint) -> bool:
         for statement in statements:
             if hasattr(statement, 'body') and len(statement.body) > 0:
-                if hasattr(statement.body[0], 'response_stream') and statement.body[0].response_stream:
+                if self.__method_has_stream_response(statement.body, endpoint.rpc_request_name):
+                    return True
+        return False
+
+    def __method_has_stream_response(self, methods: List[Any], rpc_request_name: str) -> bool:
+        for method in methods:
+            if hasattr(method, 'name') and method.name == rpc_request_name:
+                if hasattr(method, 'response_stream') and method.response_stream:
                     return True
         return False
 
     def __get_response_class_name_from_proto(self, statements: List[Any]) -> Optional[str]:
         for statement in statements:
-            if (hasattr(statement, 'body') and
-                len(statement.body) > 0 and
-                    hasattr(statement.body[0], 'response_message_type')):
-                return statement.body[0].response_message_type
+            if hasattr(statement, 'body'):
+                for return_statement in statement.body:
+                    if hasattr(return_statement, 'response_message_type'):
+                        return return_statement.response_message_type
         return None  # pragma: no cover
 
     def __assign_grpc_classes_to_endpoints(self, endpoints: List[GRPCEndpoint]) -> None:
@@ -164,7 +171,7 @@ class GRPCServer:
         for servicer_class_name in self.__dynamic_servers.keys():
             for endpoint_name, _ in self.__existing_methods.items():
                 service_name = endpoint_name.split('.')[0]
-                if f"{service_name}Servicer" == servicer_class_name:
+                if f'{service_name}Servicer' == servicer_class_name:
                     if service_name not in unique_services:
                         endpoint = GRPCEndpoint(
                             service=service_name,

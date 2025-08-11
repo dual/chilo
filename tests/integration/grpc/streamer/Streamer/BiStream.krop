@@ -1,13 +1,13 @@
 {
   "details": {
-    "methodFqn": "streamer.Streamer.Stream"
+    "methodFqn": "streamer.Streamer.BiStream"
   },
   "script": {
-    "src": "Stream.js"
+    "src": "BiStream.js"
   },
   "requests": [
     {
-      "location": "Stream-request-0.json"
+      "location": "BiStream-request-0.json"
     }
   ],
   "operationType": "duplexStreaming",

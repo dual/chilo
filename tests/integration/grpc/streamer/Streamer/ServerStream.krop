@@ -1,0 +1,16 @@
+{
+  "details": {
+    "methodFqn": "streamer.Streamer.ServerStream"
+  },
+  "script": {
+    "src": "ServerStream.js"
+  },
+  "requests": [
+    {
+      "location": "ServerStream-request.json"
+    }
+  ],
+  "operationType": "serverStreaming",
+  "invokerName": "grpc",
+  "importStreamId": "53d90ff7-722a-4998-9c29-059c815122f1"
+}
