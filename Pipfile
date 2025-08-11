@@ -19,11 +19,12 @@ jsonref = "*"
 jsonschema = "*"
 msgspec = "*"
 openapi-spec-validator = "*"
+parsy = "*"
 pydantic = "*"
 pyyaml = "*"
 Werkzeug = "*"
 xmltodict = "*"
-parsy = "*"
+
 
 [dev-packages]
 autopep8 = "*"
