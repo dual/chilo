@@ -240,6 +240,27 @@ class RouterTest(unittest.TestCase):
         )
         self.assertDictEqual(expected, body)
 
+    def test_router_request_requirements_fail_without_openapi(self):
+        expected = {
+            'errors': [
+                {'key_path': 'query_params', 'message': 'Please provide auth_id in query_params'}
+            ]
+        }
+        body = self.__get_chilo_response_body(
+            path='/nested/reqs',
+            method='get'
+        )
+        self.assertDictEqual(expected, body)
+
+    def test_router_request_requirements_pass_without_openapi(self):
+        expected = {'router_nested_directory_basic': ''}
+        body = self.__get_chilo_response_body(
+            path='/nested/reqs',
+            method='get',
+            query_string={'auth_id': '123'}
+        )
+        self.assertDictEqual(expected, body)
+
     def test_router_openapi_validate_response_pass(self):
         expected = {'page_number': 1, 'data': {'id': '2'}}
         settings = self.__get_chilo_settings(

@@ -113,7 +113,7 @@ class PipelineInterface(abc.ABC):
     def run_request_validation(self, request: Any, response: Any, endpoint: Any) -> None:
         if not endpoint.has_requirements:
             return
-        self._validator.validate_request_with_openapi(request, response, endpoint.requirements)
+        self._validator.validate_request(request, response, endpoint.requirements)
 
     @property
     def should_run_request_validation_openapi(self) -> bool:
@@ -129,7 +129,7 @@ class PipelineInterface(abc.ABC):
     def run_response_validation(self, request: Any, response: Any, endpoint: Any) -> None:
         if not endpoint.has_required_response:
             return
-        self._validator.validate_response_with_openapi(request, response, endpoint.requirements)
+        self._validator.validate_response(request, response, endpoint.requirements)
 
     @property
     def should_run_response_validation_openapi(self) -> bool:
