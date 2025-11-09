@@ -31,6 +31,7 @@ Chilo (short for *chilorhinophis*, the two-headed snake) auto-routes requests st
 - **🚀 Zero Route Boilerplate** – File paths become URLs; dynamic segments are inferred from file names.
 - **✅ Built-in Validation** – Apply OpenAPI schemas (request + response) or lightweight requirement decorators.
 - **🧱 Middlewares Everywhere** – `before`, `after`, `when_auth_required`, and global hooks keep cross-cutting logic centralized.
+- **🔔 Lifecycle Hooks** – `on_startup` / `on_shutdown` let you register callables that fire once when the router boots and when it stops.
 - **🔁 REST + gRPC** – Switch between HTTP and gRPC by flipping `api_type` and pointing at protobufs.
 - **📜 Spec Generation** – Inspect handlers + requirements to emit `openapi.yml`/`openapi.json` with a single CLI command.
 - **⚙️ Deploy-Friendly** – Works with gunicorn or the built-in CLI; supports TLS, CORS, hot reload, and custom executors.
@@ -81,11 +82,19 @@ pip install chilo_api
 
 ```python
 from chilo_api import Chilo
+from chilo_api import logger
+
+
+def cleanup_connections():
+    # close DB pools, flush caches, etc.
+    pass
 
 api = Chilo(
     base_path='/',
     handlers='api/handlers',
     cors=True,
+    on_startup=[lambda: logger.log(level='INFO', log='API booted')],
+    on_shutdown=[cleanup_connections],
     openapi='api/openapi.yml',      # optional
     openapi_validate_request=False, # flip on when ready
     openapi_validate_response=False

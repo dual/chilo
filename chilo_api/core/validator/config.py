@@ -39,6 +39,7 @@ class ConfigValidator:
         ConfigValidator._validate_cache_size(kwargs)
         ConfigValidator._validate_openapi_dependencies(kwargs)
         ConfigValidator._validate_enums(kwargs)
+        ConfigValidator._validate_hook_lists(kwargs)
 
     @staticmethod
     def _validate_field(kwargs: Dict[str, Any], field: str, expected_type: type,required: bool, custom_msg: Optional[str] = None) -> None:
@@ -69,3 +70,16 @@ class ConfigValidator:
             value = kwargs.get(field)
             if value and value not in valid_values:
                 raise RuntimeError(f'{field} should be one of: {", ".join(valid_values)}')
+
+    @staticmethod
+    def _validate_hook_lists(kwargs: Dict[str, Any]) -> None:
+        hook_fields = ('on_startup', 'on_shutdown')
+        for field in hook_fields:
+            hooks = kwargs.get(field)
+            if hooks is None:
+                continue
+            if not isinstance(hooks, (list, tuple)):
+                raise RuntimeError(f'{field} must be a list or tuple of callables')
+            for hook in hooks:
+                if not callable(hook):
+                    raise RuntimeError(f'all items in {field} must be callable')

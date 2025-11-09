@@ -1,4 +1,4 @@
-from typing import Any, Callable, Iterator, Optional, Union, cast
+from typing import Any, Callable, Iterator, Optional, Tuple, Union, cast
 from typing_extensions import Unpack
 
 from werkzeug.wrappers import Request as WSGIRequest, Response as WSGIResponse
@@ -137,6 +137,8 @@ class Router:
         self.__private_key: Optional[str] = kwargs.get('private_key')
         self.__certificate: Optional[str] = kwargs.get('certificate')
         self.__max_workers: Optional[int] = cast(Optional[int], kwargs.get('max_workers', 10))
+        self.__on_startup_hooks: Tuple[Callable[..., Any], ...] = tuple(kwargs.get('on_startup', []) or [])
+        self.__on_shutdown_hooks: Tuple[Callable[..., Any], ...] = tuple(kwargs.get('on_shutdown', []) or [])
         self.__executor: Executor = Executor(RestPipeline(**kwargs), Resolver(**kwargs), **kwargs)
 
     @property
@@ -198,6 +200,14 @@ class Router:
     @property
     def after_all(self) -> Optional[Callable[[Any, Any, Any], None]]:
         return self.__after_all
+
+    @property
+    def on_startup(self) -> Tuple[Callable[..., Any], ...]:
+        return self.__on_startup_hooks
+
+    @property
+    def on_shutdown(self) -> Tuple[Callable[..., Any], ...]:
+        return self.__on_shutdown_hooks
 
     @property
     def when_auth_required(self) -> Optional[Callable[[Any, Any, Any], None]]:

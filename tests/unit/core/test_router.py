@@ -89,6 +89,24 @@ class RouterTest(unittest.TestCase):
         chilo = Chilo(base_path='/', handlers='tests/unit/mocks/rest/handlers/valid')
         self.assertIsNone(chilo.when_auth_required)
 
+    def test_on_startup_default(self):
+        chilo = Chilo(base_path='/', handlers='tests/unit/mocks/rest/handlers/valid')
+        self.assertEqual(chilo.on_startup, tuple())
+
+    def test_on_shutdown_default(self):
+        chilo = Chilo(base_path='/', handlers='tests/unit/mocks/rest/handlers/valid')
+        self.assertEqual(chilo.on_shutdown, tuple())
+
+    def test_on_startup_custom_hooks(self):
+        hook = lambda: None
+        chilo = Chilo(base_path='/', handlers='tests/unit/mocks/rest/handlers/valid', on_startup=[hook])
+        self.assertEqual(chilo.on_startup, (hook,))
+
+    def test_on_shutdown_custom_hooks(self):
+        hook = lambda: None
+        chilo = Chilo(base_path='/', handlers='tests/unit/mocks/rest/handlers/valid', on_shutdown=[hook])
+        self.assertEqual(chilo.on_shutdown, (hook,))
+
     def test_cors_default(self):
         chilo = Chilo(base_path='/', handlers='tests/unit/mocks/rest/handlers/valid')
         self.assertFalse(chilo.cors)

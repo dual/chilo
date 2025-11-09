@@ -1,3 +1,4 @@
+from typing import List
 from typing_extensions import TypedDict, Required, NotRequired, Callable, Literal, Any
 
 
@@ -30,3 +31,5 @@ class RouterSettings(TypedDict, total=False):
     reflection: NotRequired[bool]
     private_key: NotRequired[str]
     certificate: NotRequired[str]
+    on_startup: NotRequired[List[Callable]]
+    on_shutdown: NotRequired[List[Callable]]

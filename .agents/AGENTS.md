@@ -10,6 +10,7 @@ This document summarizes the conventions every AI agent must follow when configu
 2. Optional but common flags:
    - `cors`, `host`, `port`, `reload`, `verbose`.
    - `before_all`, `after_all`, `when_auth_required`, `on_error`, `on_timeout` for cross-cutting logic.
+   - `on_startup`, `on_shutdown` accept lists/tuples of callables that run once when the router boots and when it stops; they are ideal for warmup/cleanup routines you don’t want per-request.
    - `openapi` (path to `openapi.yml`) if request/response validation is desired.
    - `openapi_validate_request` / `openapi_validate_response` (only enable when `openapi` exists).
 3. Remember: Chilo maps directories → routes automatically. Dynamic segments are prefixed with `_` in file names (e.g., `handlers/user/_user_id.py` → `/user/{user_id}`). No manual route decorators are needed.
@@ -65,6 +66,7 @@ Chilo injects strongly-typed helpers into every handler.
 3. **Validation**:
    - Use `@requirements` for headers/query/body rules even if no OpenAPI file exists.
    - If OpenAPI validation is enabled, make sure `openapi` path is correct and schemas exist.
+   - If you need one-time setup/teardown (connecting pools, metrics, etc.), prefer `on_startup`/`on_shutdown` over `before_all` since they run once per server lifecycle instead of every request.
 4. **CLI Usage**: prefer `python -m chilo_api serve --api=<module>` for development servers; avoid inventing custom runners.
 5. **Middleware**: pass shared logic via router callbacks (`before_all`, `after_all`, etc.) or per-endpoint `before`/`after` requirements.
 6. **Responses**: always set `response.body` or `response.set_error`; do not return raw dicts/tuples from handlers.

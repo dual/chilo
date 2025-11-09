@@ -25,7 +25,6 @@ pyyaml = "*"
 Werkzeug = "*"
 xmltodict = "*"
 
-
 [dev-packages]
 autopep8 = "*"
 gunicorn = "*"
